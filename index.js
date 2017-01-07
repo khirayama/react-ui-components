@@ -50,7 +50,9 @@ class ListContainer extends Component {
     console.log(this.state);
     const listItemElements = this.state.items.map((item) => {
       return (
-        <ListItem key={item.id}>
+        <ListItem
+          key={item.id}
+          >
           <ListItemLeftBackground>Left</ListItemLeftBackground>
           <ListItemContent>{item.name}</ListItemContent>
           <ListItemRightBackground>Right</ListItemRightBackground>

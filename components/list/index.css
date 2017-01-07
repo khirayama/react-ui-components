@@ -1,3 +1,5 @@
+$transition-time: 1000ms;
+
 /* reset */
 .list,
 .list-item,
@@ -10,7 +12,7 @@
   padding: 0;
   outline: 0;
   border: 0;
-  tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   touch-callout: none;
   user-select: none;
 }
@@ -20,12 +22,23 @@
   list-style: none;
   width: 100%;
   .list-item {
+    overflow: hidden;
+    transition: all $transition-time ease-out;
     .list-item-content {}
     .list-item-background {
       display: none;
     }
-    .list-item-left-background {}
-    .list-item-right-background {}
+
+    &-transition-enter {
+      max-height: 0;
+    }
+
+    &-transition-leave {
+      transition: height $transition-time ease-out;
+      &-active {
+        height: 0!important;
+      }
+    }
   }
 }
 
@@ -41,6 +54,7 @@
 
 /* custom */
 .list {
+  border-top: solid 1px #aaa;
   .list-item {
     border-bottom: solid 1px #aaa;
     .list-item-content {

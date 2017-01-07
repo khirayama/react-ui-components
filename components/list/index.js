@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 /*
  * List
@@ -16,20 +17,41 @@ import React, {Component} from 'react';
 // - swipe時にアニメーションができる
 // - swipe完了時に戻る or 抜けるアニメーションができる
 
+const TRANSITION_TIME = 1000;
+
 export class List extends Component {
   render() {
     return (
       <ul
         className="list"
-        >{this.props.children}</ul>
+        >
+        <ReactCSSTransitionGroup
+          transitionAppear={false}
+          transitionName="list-item-transition"
+          transitionEnterTimeout={TRANSITION_TIME}
+          transitionLeaveTimeout={TRANSITION_TIME}
+        >{this.props.children}</ReactCSSTransitionGroup>
+      </ul>
     );
   }
 }
 
 export class ListItem extends Component {
+  componentDidMount() {
+    const el = this.listItem;
+    const rect = el.getBoundingClientRect();
+
+    this.listItem.style.height = rect.height + 'px';
+    setTimeout(() => {
+      if (el.classList.contains('list-item-transition-enter')) {
+        this.listItem.style.maxHeight = rect.height + 'px';
+      }
+    }, 0);
+  }
   render() {
     return (
       <li
+        ref={(listItem) => this.listItem = listItem}
         className="list-item"
         >{this.props.children}</li>
     );
