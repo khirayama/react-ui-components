@@ -1,6 +1,6 @@
 module.exports = {
-  "input": "./index.css",
-  "output": "./bundle.css",
+  "input": "./examples/index.css",
+  "output": "./examples/bundle.css",
   "use": [
     "postcss-easy-import",
     "postcss-simple-vars",

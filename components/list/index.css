@@ -59,6 +59,12 @@ $transition-time: 1000ms;
   border-top: solid 1px #aaa;
   .list-item {
     border-bottom: solid 1px #aaa;
+
+    &__holding {
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
+      transition-property: box-shadow;
+    }
+
     .list-item-content {
       padding: 12px;
     }

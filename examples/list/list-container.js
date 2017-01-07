@@ -1,14 +1,14 @@
 import React, {Component} from 'react';
-import ReactDOM from 'react-dom';
+
 import {
   List,
   ListItem,
   ListItemContent,
   ListItemLeftBackground,
   ListItemRightBackground,
-} from './components/list';
+} from '../../components/list';
 
-class ListContainer extends Component {
+export default class ListContainer extends Component {
   constructor(props) {
     super(props);
 
@@ -64,16 +64,10 @@ class ListContainer extends Component {
       <section>
         <div onClick={this.handleClickAddButton}>add item</div>
         <div onClick={this.handleClickRemoveButton}>remove item</div>
-        <List>{listItemElements}</List>
+        <List
+          onSort={() => console.log('sort')}
+          >{listItemElements}</List>
       </section>
     );
   }
 }
-
-window.addEventListener('DOMContentLoaded', () => {
-  ReactDOM.render((
-    <section>
-      <ListContainer/>
-    </section>
-  ), document.querySelector('.application'));
-});
