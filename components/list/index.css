@@ -1,0 +1,16 @@
+/* structure */
+/* .list { */
+/*   .list-item { */
+/*     .list-item-left-background {} */
+/*     .list-item-content {} */
+/*     .list-item-right-background {} */
+/*   } */
+/* } */
+
+/* basic */
+.list {
+  width: 100%;
+  list-style: none;
+}
+
+/* custom */
