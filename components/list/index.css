@@ -23,7 +23,9 @@ $transition-time: 1000ms;
   width: 100%;
   .list-item {
     overflow: hidden;
-    transition: all $transition-time ease-out;
+    transition: $transition-time ease-out;
+    transition-property: height, max-height;
+    will-change: height, max-height;
     .list-item-content {}
     .list-item-background {
       display: none;
