@@ -47,11 +47,11 @@ class ListContainer extends Component {
     this.setState({items});
   }
   render() {
-    console.log(this.state);
     const listItemElements = this.state.items.map((item) => {
       return (
         <ListItem
           key={item.id}
+          onHold={() => console.log('hold')}
           >
           <ListItemLeftBackground>Left</ListItemLeftBackground>
           <ListItemContent>{item.name}</ListItemContent>

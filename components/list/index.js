@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import classNames from 'classnames';
 
 /*
  * List
@@ -20,6 +21,16 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 const TRANSITION_TIME = 1000;
 
 export class List extends Component {
+  componentDidMount() {
+    const els = document.querySelectorAll('.list-item');
+
+    for (let index = 0; index < els.length; index++) {
+      const el = els[index];
+      el.addEventListener('contextmenu', event => {
+        event.preventDefault();
+      });
+    }
+  }
   render() {
     return (
       <ul
@@ -36,7 +47,21 @@ export class List extends Component {
   }
 }
 
+// holdの判定はListItemのみで行う
 export class ListItem extends Component {
+  constructor() {
+    super();
+
+    this._timerId = null
+
+    this.state = {
+      holding: false,
+    };
+
+    this.handleTouchStart = this._handleTouchStart.bind(this);
+    this.handleTouchMove = this._handleTouchMove.bind(this);
+    this.handleTouchEnd = this._handleTouchEnd.bind(this);
+  }
   componentDidMount() {
     const el = this.listItem;
     const rect = el.getBoundingClientRect();
@@ -48,11 +73,33 @@ export class ListItem extends Component {
       }
     }, 0);
   }
+  _handleTouchStart() {
+    const THRESHOLD_TIME = 750;
+
+    this._timerId = setTimeout(() => {
+      this.setState({holding: true});
+      this.props.onHold();
+    }, THRESHOLD_TIME);
+  }
+  _handleTouchMove() {
+    clearTimeout(this._timerId);
+    this.setState({holding: false});
+  }
+  _handleTouchEnd() {
+    clearTimeout(this._timerId);
+    this.setState({holding: false});
+  }
   render() {
     return (
       <li
+        className={classNames(
+          "list-item",
+          {"list-item__holding": this.state.holding}
+        )}
         ref={(listItem) => this.listItem = listItem}
-        className="list-item"
+        onTouchStart={this.handleTouchStart}
+        onTouchMove={this.handleTouchMove}
+        onTouchEnd={this.handleTouchEnd}
         >{this.props.children}</li>
     );
   }
