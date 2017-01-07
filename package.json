@@ -7,7 +7,7 @@
     "start": "npm run server & npm run watch:scripts & npm run watch:styles",
     "server": "browser-sync start --server --files='./index.html,./bundle.css,./bundle.js' --no-open",
     "build:scripts": "browserify index.js -o bundle.js -t babelify",
-    "watch:scripts": "watchify index.js -o bundle.js -t babelify",
+    "watch:scripts": "watchify index.js -o bundle.js -t babelify --debug",
     "build:styles": "postcss -c .postcssrc.js",
     "watch:styles": "postcss -c .postcssrc.js -w"
   },

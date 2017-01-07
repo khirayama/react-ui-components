@@ -8,6 +8,14 @@ import React, {Component} from 'react';
  * ListItemRightBackground
  */
 
+// 仕様
+// - hold eventを発火する
+// - hold時のアニメーションができる
+// - option: holdしたらsortできる
+// - swipeLeft/swipeRightできる
+// - swipe時にアニメーションができる
+// - swipe完了時に戻る or 抜けるアニメーションができる
+
 export class List extends Component {
   render() {
     return (

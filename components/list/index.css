@@ -1,16 +1,53 @@
+/* reset */
+.list,
+.list-item,
+.list-item-content ,
+.list-item-background,
+.list-item-left-background,
+.list-item-right-background {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  outline: 0;
+  border: 0;
+  tap-highlight-color: rgba(0, 0, 0, 0);
+  touch-callout: none;
+  user-select: none;
+}
+
+/* basic */
+.list {
+  list-style: none;
+  width: 100%;
+  .list-item {
+    .list-item-content {}
+    .list-item-background {
+      display: none;
+    }
+    .list-item-left-background {}
+    .list-item-right-background {}
+  }
+}
+
 /* structure */
 /* .list { */
 /*   .list-item { */
-/*     .list-item-left-background {} */
 /*     .list-item-content {} */
+/*     .list-item-background {} */
+/*     .list-item-left-background {} */
 /*     .list-item-right-background {} */
 /*   } */
 /* } */
 
-/* basic */
-.list {
-  width: 100%;
-  list-style: none;
-}
-
 /* custom */
+.list {
+  .list-item {
+    border-bottom: solid 1px #aaa;
+    .list-item-content {
+      padding: 12px;
+    }
+    .list-item-background {}
+    .list-item-left-background {}
+    .list-item-right-background {}
+  }
+}
