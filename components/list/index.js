@@ -227,7 +227,9 @@ export class ListItem extends Component {
           listItemElements[index].style.transition = 'none';
           listItemElements[index].style.transform = `translateY(0px)`;
           setTimeout(() => {
-            listItemElements[index].style.transition = '200ms ease-out';
+            if (this.listItem !== listItemElements[index]) {
+              listItemElements[index].style.transition = '200ms ease-out';
+            }
           });
         }
       }
