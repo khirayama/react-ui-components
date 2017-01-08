@@ -13,7 +13,7 @@ export default class ListContainer extends Component {
     super(props);
 
     const items = [];
-    for (let index = 0; index < 5; index++) {
+    for (let index = 0; index < 15; index++) {
       items.push({
         id: index,
         name: `Item ${index}`,

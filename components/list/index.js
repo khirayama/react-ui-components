@@ -109,6 +109,7 @@ export class ListItem extends Component {
     if (distance > 10) {
       if (this.state.holding) {
         event.preventDefault();
+        event.stopPropagation();
       }
 
       clearTimeout(this._timerId);
