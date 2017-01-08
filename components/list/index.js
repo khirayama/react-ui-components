@@ -104,15 +104,24 @@ export class ListItem extends Component {
     }, THRESHOLD_TIME);
   }
   _handleTouchMove(event) {
-    clearTimeout(this._timerId);
+    const distance = Math.sqrt(Math.pow(event.touches[0].clientX - this.state.startX, 2) + Math.pow(event.touches[0].clientY - this.state.startY, 2));
 
-    this.setState({
-      endX: event.touches[0].clientX,
-      endY: event.touches[0].clientY,
-      endTime: new Date(),
-    });
+    if (distance > 10) {
+      if (this.state.holding) {
+        event.preventDefault();
+      }
+
+      clearTimeout(this._timerId);
+
+      this.setState({
+        endX: event.touches[0].clientX,
+        endY: event.touches[0].clientY,
+        endTime: new Date(),
+      });
+    }
   }
-  _handleTouchEnd() {
+  _handleTouchEnd(event) {
+    event.preventDefault();
     clearTimeout(this._timerId);
 
     this.setState({
@@ -152,6 +161,7 @@ export class ListItem extends Component {
 
     if (this.state.holding) {
       const listItemElements = this.context.listElement().querySelectorAll('.list-item');
+      style.transition = 'none';
       style.transform = `translateY(${diff.y}px)`;
 
       let currentIndex = null;
@@ -167,7 +177,6 @@ export class ListItem extends Component {
 
         // if (listItemElement !== this.listItem && targetRect.top < top && top < targetRect.top + targetRect.height) {
         if (targetRect.top < top && top < targetRect.top + targetRect.height) {
-          listItemElement.style.transition = 'transform 200ms ease-out';
           if (this.state.startY < targetRect.top) {
             if (!listItemElement.classList.contains('moving')) {
               if (listItemElement.style.transform === `translateY(-${height}px)`) {
@@ -215,8 +224,11 @@ export class ListItem extends Component {
       if (this.context.listElement()) {
         const listItemElements = this.context.listElement().querySelectorAll('.list-item');
         for (let index = 0; index < listItemElements.length; index++) {
-          listItemElements[index].style.transform = `translateY(0px)`;
           listItemElements[index].style.transition = 'none';
+          listItemElements[index].style.transform = `translateY(0px)`;
+          setTimeout(() => {
+            listItemElements[index].style.transition = '200ms ease-out';
+          });
         }
       }
     }

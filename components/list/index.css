@@ -31,6 +31,11 @@ $transition-time: 1000ms;
       display: none;
     }
 
+    &__holding {
+      position: relative;
+      z-index: 1;
+    }
+
     &-transition-enter {
       max-height: 0;
     }
@@ -59,6 +64,7 @@ $transition-time: 1000ms;
   border-top: solid 1px #aaa;
   .list-item {
     border-bottom: solid 1px #aaa;
+    background-color: #fff;
 
     &__holding {
       box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
