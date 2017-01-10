@@ -25,6 +25,7 @@ export default class ListContainer extends Component {
 
     this.handleClickAddButton = this._handleClickAddButton.bind(this);
     this.handleClickRemoveButton = this._handleClickRemoveButton.bind(this);
+    this.handleSort = this._handleSort.bind(this);
   }
   _handleClickAddButton() {
     const index = this.state.items.length;
@@ -43,6 +44,13 @@ export default class ListContainer extends Component {
         return true;
       }
     });
+
+    this.setState({items});
+  }
+  _handleSort(from, to) {
+    const items = this.state.items;
+    const item = items.splice(from, 1);
+    items.splice(to, 0, item);
 
     this.setState({items});
   }
@@ -65,7 +73,7 @@ export default class ListContainer extends Component {
         <div onClick={this.handleClickAddButton}>add item</div>
         <div onClick={this.handleClickRemoveButton}>remove item</div>
         <List
-          onSort={() => console.log('sort')}
+          onSort={this.handleSort}
           >{listItemElements}</List>
       </section>
     );

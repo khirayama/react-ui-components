@@ -22,18 +22,14 @@ const TRANSITION_TIME = 1000;
 
 export class List extends Component {
   componentDidMount() {
-    const els = document.querySelectorAll('.list-item');
-
-    for (let index = 0; index < els.length; index++) {
-      const el = els[index];
-      el.addEventListener('contextmenu', event => {
-        event.preventDefault();
-      });
-    }
+    document.querySelector('.list').addEventListener('contextmenu', event => {
+      event.preventDefault();
+    });
   }
   getChildContext() {
     return {
       listElement: () => this.listElement,
+      onSort: this.props.onSort,
     };
   }
   render() {
@@ -57,6 +53,7 @@ export class List extends Component {
 
 List.childContextTypes = {
   listElement: PropTypes.func,
+  onSort: PropTypes.func,
 };
 
 // holdの判定はListItemのみで行う
@@ -93,10 +90,10 @@ export class ListItem extends Component {
 
     this.diff = 0;
   }
-  componentDidUpdate() {
-    const THRESHOLD_HEIGHT = 50;
-    const listElement = this.context.listElement();
-    if (listElement) {
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.holding && this.state.holding) {
+      const THRESHOLD_HEIGHT = 50;
+      const listElement = this.context.listElement();
       const listRect = listElement.getBoundingClientRect();
       const listContentRect = listElement.querySelector('.list').getBoundingClientRect();
 
@@ -143,9 +140,11 @@ export class ListItem extends Component {
     }
   }
   _handleTouchEnd(event) {
-    event.preventDefault();
     clearTimeout(this._timerId);
     this.diff = 0;
+    if (this.currentIndex !== this.targetIndex) {
+      this.context.onSort(this.currentIndex, this.targetIndex);
+    }
 
     this.setState({
       startX: null,
@@ -187,60 +186,61 @@ export class ListItem extends Component {
       style.transition = 'none';
       style.transform = `translateY(${diff.y + this.diff}px)`;
 
-      let currentIndex = null;
-      let targetIndex = null;
-
       const height = this.listItem.getBoundingClientRect().height;
 
-      // get currentIndex and targetIndex
       for (let index = 0; index < listItemElements.length; index++) {
         const listItemElement = listItemElements[index];
         const targetRect = listItemElement.getBoundingClientRect();
         const top = this.state.endY;
 
-        // if (listItemElement !== this.listItem && targetRect.top < top && top < targetRect.top + targetRect.height) {
-        if (targetRect.top < top && top < targetRect.top + targetRect.height) {
-          if (this.state.startY < targetRect.top) {
-            if (!listItemElement.classList.contains('moving')) {
-              if (listItemElement.style.transform === `translateY(-${height}px)`) {
+        if (listItemElement !== this.listItem) {
+          if (targetRect.top < top && top < targetRect.top + targetRect.height) {
+            if (this.state.startY < targetRect.top) {
+              if (!listItemElement.classList.contains('moving')) {
+                if (listItemElement.style.transform === `translateY(-${height}px)`) {
+                  listItemElement.style.transform = `translateY(0px)`;
+                  listItemElement.classList.add('moving');
+                  setTimeout(() => {
+                    listItemElement.classList.remove('moving')
+                  }, 200);
+                } else {
+                  listItemElement.style.transform = `translateY(-${height}px)`;
+                  listItemElement.classList.add('moving');
+                  this.targetIndex = index;
+                  setTimeout(() => {
+                    listItemElement.classList.remove('moving')
+                  }, 200);
+                }
+              }
+            } else if (targetRect.top + targetRect.height < this.state.startY) {
+              if (!listItemElement.classList.contains('moving')) {
+                if (listItemElement.style.transform === `translateY(${height}px)`) {
+                  listItemElement.style.transform = `translateY(0px)`;
+                  listItemElement.classList.add('moving');
+                  setTimeout(() => {
+                    listItemElement.classList.remove('moving')
+                  }, 200);
+                } else {
+                  listItemElement.style.transform = `translateY(${height}px)`;
+                  listItemElement.classList.add('moving');
+                  this.targetIndex = index;
+                  setTimeout(() => {
+                    listItemElement.classList.remove('moving')
+                  }, 200);
+                }
+              }
+            } else {
+              if (!listItemElement.classList.contains('moving')) {
                 listItemElement.style.transform = `translateY(0px)`;
                 listItemElement.classList.add('moving');
                 setTimeout(() => {
                   listItemElement.classList.remove('moving')
                 }, 200);
-              } else {
-                listItemElement.style.transform = `translateY(-${height}px)`;
-                listItemElement.classList.add('moving');
-                setTimeout(() => {
-                  listItemElement.classList.remove('moving')
-                }, 200);
               }
-            }
-          } else if (targetRect.top + targetRect.height < this.state.startY) {
-            if (!listItemElement.classList.contains('moving')) {
-              if (listItemElement.style.transform === `translateY(${height}px)`) {
-                listItemElement.style.transform = `translateY(0px)`;
-                listItemElement.classList.add('moving');
-                setTimeout(() => {
-                  listItemElement.classList.remove('moving')
-                }, 200);
-              } else {
-                listItemElement.style.transform = `translateY(${height}px)`;
-                listItemElement.classList.add('moving');
-                setTimeout(() => {
-                  listItemElement.classList.remove('moving')
-                }, 200);
-              }
-            }
-          } else {
-            if (!listItemElement.classList.contains('moving')) {
-              listItemElement.style.transform = `translateY(0px)`;
-              listItemElement.classList.add('moving');
-              setTimeout(() => {
-                listItemElement.classList.remove('moving')
-              }, 200);
             }
           }
+        } else {
+          this.currentIndex = index;
         }
       }
     } else {
@@ -276,6 +276,7 @@ export class ListItem extends Component {
 
 ListItem.contextTypes = {
   listElement: PropTypes.func,
+  onSort: PropTypes.func,
 };
 
 export class ListItemContent extends Component {
