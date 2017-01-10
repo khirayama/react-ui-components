@@ -47,11 +47,16 @@ export class ListItemContent extends Component {
   }
   _handleTouchEnd() {
     this._updateTouchEndView();
+    const currentIndex = this._calcCurrentIndex();
 
     if (this._isRightSwipe()) {
-      this.context.onSwipeRight();
+      setTimeout(() => {
+        this.context.onSwipeRight(currentIndex);
+      }, 200);
     } else if (this._isLeftSwipe()) {
-      this.context.onSwipeLeft();
+      setTimeout(() => {
+        this.context.onSwipeLeft(currentIndex);
+      }, 200);
     }
 
     this.touch = {
@@ -120,6 +125,32 @@ export class ListItemContent extends Component {
       },
     };
   }
+  _calcCurrentIndex() {
+    const diff = this._calcDiff();
+    const listElement = this.context.listElement();
+    const listItemElements = listElement.querySelectorAll('.list-item');
+
+    let currentIndex = null;
+
+    for (let index = 0; index < listItemElements.length; index++) {
+      const listItemElement = listItemElements[index];
+      const scrollTop = listElement.scrollTop;
+      const targetRect = {
+        top: listElement.offsetTop + listItemElement.offsetTop,
+        height: listItemElement.offsetHeight,
+      };
+
+      if (
+        targetRect.top - scrollTop < this.touch.endY &&
+        this.touch.endY < targetRect.top + targetRect.height - scrollTop
+      ) {
+        currentIndex = index;
+        break;
+      }
+    }
+
+    return currentIndex;
+  }
   render() {
     return (
       <div
@@ -134,6 +165,7 @@ export class ListItemContent extends Component {
 }
 
 ListItemContent.contextTypes = {
+  listElement: PropTypes.func,
   holding: PropTypes.func,
   onSwipeLeft: PropTypes.func,
   onSwipeRight: PropTypes.func,

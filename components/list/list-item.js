@@ -276,7 +276,7 @@ export class ListItem extends Component {
         currentIndex = index;
       }
       if (
-        targetRect.top - scrollTop< this.touch.endY &&
+        targetRect.top - scrollTop < this.touch.endY &&
         this.touch.endY < targetRect.top + targetRect.height - scrollTop
       ) {
         targetIndex = index;

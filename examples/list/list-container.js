@@ -13,7 +13,7 @@ export default class ListContainer extends Component {
     super(props);
 
     const items = [];
-    for (let index = 0; index < 20; index++) {
+    for (let index = 0; index < 5; index++) {
       items.push({
         id: index,
         name: `Item ${index}`,
@@ -53,10 +53,17 @@ export default class ListContainer extends Component {
   _handleTouchHold() {
     console.log('touch hold!');
   }
-  _handleSwipeLeft() {
-    console.log('swipe left');
+  _handleSwipeLeft(index) {
+    const items = this.state.items.filter((item, index_) => {
+      if (index_ !== index) {
+        return true;
+      }
+    });
+    console.log(index, items);
+
+    this.setState({items});
   }
-  _handleSwipeRight() {
+  _handleSwipeRight(index) {
     console.log('swipe right');
   }
   _handleSort(from, to) {
