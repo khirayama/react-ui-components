@@ -30,10 +30,6 @@ $transition-time: 200ms;
     overflow: hidden;
     transition: $transition-time ease-out;
     will-change: transform, height, max-height;
-    .list-item-content {}
-    .list-item-background {
-      display: none;
-    }
 
     &__holding {
       position: relative;
@@ -53,6 +49,27 @@ $transition-time: 200ms;
 
     .list-item-content {
       transition: $transition-time ease-out;
+    }
+
+    .list-item-background {
+      display: none;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      z-index: -1;
+    }
+    .list-item-left-background {
+      left: 0;
+      text-align: left;
+    }
+    .list-item-right-background {
+      right: 0;
+      text-align: right;
+    }
+
+    &__moving {
+      position: relative;
     }
   }
 }
@@ -84,11 +101,16 @@ $transition-time: 200ms;
       }
 
       .list-item-content {
+        background-color: red;
         padding: 12px;
       }
       .list-item-background {}
-      .list-item-left-background {}
-      .list-item-right-background {}
+      .list-item-left-background {
+        background-color: blue;
+      }
+      .list-item-right-background {
+        background-color: green;
+      }
     }
   }
 }

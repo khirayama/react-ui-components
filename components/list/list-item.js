@@ -35,6 +35,7 @@ export class ListItem extends Component {
   }
   getChildContext() {
     return {
+      listItemElement: () => this.listItem,
       holding: () => this.touch.holding,
       onSwipeLeft: this.props.onSwipeLeft,
       onSwipeRight: this.props.onSwipeRight,
@@ -303,6 +304,7 @@ export class ListItem extends Component {
 }
 
 ListItem.childContextTypes = {
+  listItemElement: PropTypes.func,
   holding: PropTypes.func,
   onSwipeLeft: PropTypes.func,
   onSwipeRight: PropTypes.func,

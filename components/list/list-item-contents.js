@@ -2,6 +2,7 @@ import React, {Component, PropTypes} from 'react';
 
 const THRESHOLD_WIDTH = 120;
 const THRESHOLD_DELTA = 0.8;
+const TRANSITION_TIME = 200;
 
 export class ListItemContent extends Component {
   constructor() {
@@ -52,11 +53,11 @@ export class ListItemContent extends Component {
     if (this._isRightSwipe()) {
       setTimeout(() => {
         this.context.onSwipeRight(currentIndex);
-      }, 200);
+      }, TRANSITION_TIME);
     } else if (this._isLeftSwipe()) {
       setTimeout(() => {
         this.context.onSwipeLeft(currentIndex);
-      }, 200);
+      }, TRANSITION_TIME);
     }
 
     this.touch = {
@@ -70,13 +71,28 @@ export class ListItemContent extends Component {
   }
   _updateTouchMoveView() {
     const diff = this._calcDiff();
+    const listItemElement = this.context.listItemElement();
 
     if (!this.context.holding()) {
+      listItemElement.classList.add('list-item__moving');
       this.listItemContent.style.transform = `translateX(${diff.x}px)`;
+
+      if (diff.x > 0) {
+        const leftBackgroundElement = listItemElement.querySelector('.list-item-left-background');
+        const rightBackgroundElement = listItemElement.querySelector('.list-item-right-background');
+        leftBackgroundElement.style.display = 'inline-block';
+        rightBackgroundElement.style.display = 'none';
+      } else if (diff.x < 0) {
+        const leftBackgroundElement = listItemElement.querySelector('.list-item-left-background');
+        const rightBackgroundElement = listItemElement.querySelector('.list-item-right-background');
+        leftBackgroundElement.style.display = 'none';
+        rightBackgroundElement.style.display = 'inline-block';
+      }
     }
   }
   _updateTouchEndView() {
     const diff = this._calcDiff();
+    const listItemElement = this.context.listItemElement();
 
     this.listItemContent.style.transitionProperty = 'transform';
 
@@ -86,6 +102,11 @@ export class ListItemContent extends Component {
       this.listItemContent.style.transform = `translateX(-100%)`;
     } else {
       this.listItemContent.style.transform = `translateX(0px)`;
+    }
+    if (listItemElement.classList.contains('list-item__moving')) {
+      setTimeout(() => {
+        listItemElement.classList.remove('list-item__moving');
+      }, TRANSITION_TIME);
     }
   }
   _isLeftSwipe() {
@@ -141,8 +162,8 @@ export class ListItemContent extends Component {
       };
 
       if (
-        targetRect.top - scrollTop < this.touch.endY &&
-        this.touch.endY < targetRect.top + targetRect.height - scrollTop
+        targetRect.top - scrollTop < this.touch.startY &&
+        this.touch.startY < targetRect.top + targetRect.height - scrollTop
       ) {
         currentIndex = index;
         break;
@@ -166,6 +187,7 @@ export class ListItemContent extends Component {
 
 ListItemContent.contextTypes = {
   listElement: PropTypes.func,
+  listItemElement: PropTypes.func,
   holding: PropTypes.func,
   onSwipeLeft: PropTypes.func,
   onSwipeRight: PropTypes.func,
