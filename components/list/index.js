@@ -38,17 +38,19 @@ export class List extends Component {
   }
   render() {
     return (
-      <ul
-        className="list"
+      <section
+        className="list-container"
         ref={(listElement) => this.listElement = listElement}
-        >
-        <ReactCSSTransitionGroup
-          transitionAppear={false}
-          transitionName="list-item-transition"
-          transitionEnterTimeout={TRANSITION_TIME}
-          transitionLeaveTimeout={TRANSITION_TIME}
-        >{this.props.children}</ReactCSSTransitionGroup>
-      </ul>
+      >
+        <ul className="list">
+          <ReactCSSTransitionGroup
+            transitionAppear={false}
+            transitionName="list-item-transition"
+            transitionEnterTimeout={TRANSITION_TIME}
+            transitionLeaveTimeout={TRANSITION_TIME}
+          >{this.props.children}</ReactCSSTransitionGroup>
+        </ul>
+      </section>
     );
   }
 }
@@ -88,6 +90,25 @@ export class ListItem extends Component {
         this.listItem.style.maxHeight = rect.height + 'px';
       }
     }, 0);
+
+    this.diff = 0;
+  }
+  componentDidUpdate() {
+    const THRESHOLD_HEIGHT = 50;
+    const listElement = this.context.listElement();
+    if (listElement) {
+      const listRect = listElement.getBoundingClientRect();
+      const listContentRect = listElement.querySelector('.list').getBoundingClientRect();
+
+      if (0 < listElement.scrollTop  && listRect.top + THRESHOLD_HEIGHT > this.state.endY) {
+        listElement.scrollTop -= 3;
+        this.diff -= 3;
+      }
+      if (listElement.scrollTop < listContentRect.height - listRect.height && listRect.top + listRect.height - THRESHOLD_HEIGHT < this.state.endY) {
+        listElement.scrollTop += 3;
+        this.diff += 3;
+      }
+    }
   }
   _handleTouchStart(event) {
     const THRESHOLD_TIME = 750;
@@ -104,14 +125,14 @@ export class ListItem extends Component {
     }, THRESHOLD_TIME);
   }
   _handleTouchMove(event) {
+    if (this.state.holding) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
     const distance = Math.sqrt(Math.pow(event.touches[0].clientX - this.state.startX, 2) + Math.pow(event.touches[0].clientY - this.state.startY, 2));
 
     if (distance > 10) {
-      if (this.state.holding) {
-        event.preventDefault();
-        event.stopPropagation();
-      }
-
       clearTimeout(this._timerId);
 
       this.setState({
@@ -124,6 +145,7 @@ export class ListItem extends Component {
   _handleTouchEnd(event) {
     event.preventDefault();
     clearTimeout(this._timerId);
+    this.diff = 0;
 
     this.setState({
       startX: null,
@@ -163,7 +185,7 @@ export class ListItem extends Component {
     if (this.state.holding) {
       const listItemElements = this.context.listElement().querySelectorAll('.list-item');
       style.transition = 'none';
-      style.transform = `translateY(${diff.y}px)`;
+      style.transform = `translateY(${diff.y + this.diff}px)`;
 
       let currentIndex = null;
       let targetIndex = null;
