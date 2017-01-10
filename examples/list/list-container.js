@@ -39,8 +39,8 @@ export default class ListContainer extends Component {
   }
   _handleClickRemoveButton() {
     const index = this.state.items.length;
-    const items = this.state.items.filter((item) => {
-      if (item.id !== index - 1) {
+    const items = this.state.items.filter((item, index_) => {
+      if (index_ !== index - 1) {
         return true;
       }
     });
@@ -48,9 +48,10 @@ export default class ListContainer extends Component {
     this.setState({items});
   }
   _handleSort(from, to) {
+    console.log(from, to);
     const items = this.state.items;
     const item = items.splice(from, 1);
-    items.splice(to, 0, item);
+    items.splice(to, 0, item[0]);
 
     this.setState({items});
   }
@@ -59,7 +60,7 @@ export default class ListContainer extends Component {
       return (
         <ListItem
           key={item.id}
-          onHold={() => console.log('hold')}
+          onTouchHold={() => console.log('hold')}
           >
           <ListItemLeftBackground>Left</ListItemLeftBackground>
           <ListItemContent>{item.name}</ListItemContent>

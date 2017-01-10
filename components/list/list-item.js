@@ -1,114 +1,248 @@
 import React, {Component, PropTypes} from 'react';
 import classNames from 'classnames';
 
+const TRANSITION_TIME = 200;
+const transitionProperties = {
+  NONE: 'none',
+  HEIGHT: 'height',
+  MAX_HEIGHT: 'max-height',
+  TRANSFORM: 'transform',
+};
+
 // holdの判定はListItemのみで行う
 export class ListItem extends Component {
   constructor() {
     super();
 
-    this._timerId = null
-
-    this.state = {
+    this.touch = {
       startX: null,
       startY: null,
+      startScrollTop: null,
       startTime: new Date(),
       endX: null,
       endY: null,
       endTime: new Date(),
+      timerId: null,
       holding: false,
     };
 
     this.handleTouchStart = this._handleTouchStart.bind(this);
     this.handleTouchMove = this._handleTouchMove.bind(this);
     this.handleTouchEnd = this._handleTouchEnd.bind(this);
+    this.handleTouchHold = this._handleTouchHold.bind(this);
   }
+
   componentDidMount() {
-    const el = this.listItem;
-    const rect = el.getBoundingClientRect();
-
-    this.listItem.style.height = rect.height + 'px';
-    setTimeout(() => {
-      if (el.classList.contains('list-item-transition-enter')) {
-        this.listItem.style.maxHeight = rect.height + 'px';
-      }
-    }, 0);
-
-    this.diff = 0;
+    this._enterListItemAnimation();
   }
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.holding && this.state.holding) {
-      const THRESHOLD_HEIGHT = 50;
-      const listElement = this.context.listElement();
-      const listRect = listElement.getBoundingClientRect();
-      const listContentRect = listElement.querySelector('.list').getBoundingClientRect();
 
-      if (0 < listElement.scrollTop  && listRect.top + THRESHOLD_HEIGHT > this.state.endY) {
-        listElement.scrollTop -= 3;
-        this.diff -= 3;
-      }
-      if (listElement.scrollTop < listContentRect.height - listRect.height && listRect.top + listRect.height - THRESHOLD_HEIGHT < this.state.endY) {
-        listElement.scrollTop += 3;
-        this.diff += 3;
-      }
-    }
-  }
+  // handling event
   _handleTouchStart(event) {
-    const THRESHOLD_TIME = 750;
+    const THRESHOLD_TIME = 500;
 
-    this.setState({
+    this.touch = Object.assign({}, this.touch, {
       startX: event.touches[0].clientX,
       startY: event.touches[0].clientY,
+      startScrollTop: this.context.listElement().scrollTop,
       startTime: new Date(),
+      timerId: setTimeout(this.handleTouchHold, THRESHOLD_TIME),
     });
 
-    this._timerId = setTimeout(() => {
-      this.setState({holding: true});
-      this.props.onHold();
-    }, THRESHOLD_TIME);
+    this._updateTouchStartView();
   }
   _handleTouchMove(event) {
-    if (this.state.holding) {
+    if (this.touch.holding) {
       event.preventDefault();
       event.stopPropagation();
     }
 
-    const distance = Math.sqrt(Math.pow(event.touches[0].clientX - this.state.startX, 2) + Math.pow(event.touches[0].clientY - this.state.startY, 2));
+    const distance = Math.sqrt(
+      Math.pow(event.touches[0].clientX - this.touch.startX, 2) +
+      Math.pow(event.touches[0].clientY - this.touch.startY, 2)
+    );
 
     if (distance > 10) {
-      clearTimeout(this._timerId);
+      clearTimeout(this.touch.timerId);
 
-      this.setState({
+      this.touch = Object.assign({}, this.touch, {
         endX: event.touches[0].clientX,
         endY: event.touches[0].clientY,
         endTime: new Date(),
       });
+
+      this._updateTouchMoveView();
     }
   }
+  _handleTouchHold() {
+    this.touch.holding = true;
+
+    this._updateTouchHoldView();
+
+    // callback
+    this.props.onTouchHold();
+  }
   _handleTouchEnd(event) {
-    clearTimeout(this._timerId);
-    this.diff = 0;
-    if (this.currentIndex !== this.targetIndex) {
-      this.context.onSort(this.currentIndex, this.targetIndex);
+    clearTimeout(this.touch.timerId);
+
+    this._updateTouchEndView();
+
+    // callback
+    const {currentIndex, targetIndex} = this._calcIndex();
+    if (this.touch.holding && currentIndex !== null && targetIndex !== null) {
+      this.context.onSort(currentIndex, targetIndex);
     }
 
-    this.setState({
+    this.touch = {
       startX: null,
       startY: null,
+      startScrollTop: null,
       startTime: new Date(),
       endX: null,
       endY: null,
       endTime: new Date(),
+      timerId: null,
       holding: false,
-    });
+    };
   }
-  _getDiff() {
-    let x = this.state.endX - this.state.startX;
-    let y = this.state.endY - this.state.startY;
-    let time = this.state.endTime.getTime() - this.state.startTime.getTime();
+
+  // update views
+  _updateTouchStartView() {
+  }
+  _updateTouchMoveView() {
+    if (this.touch.holding) {
+      this.listItem.classList.add('list-item__sorting');
+
+      this._moveCurrentListItemAnimation();
+      this._moveListItemAnimation();
+      this._scrollListView();
+    }
+  }
+  _updateTouchHoldView() {
+    if (!this.listItem.classList.contains('list-item__holding')) {
+      this.listItem.classList.add('list-item__holding');
+    }
+  }
+  _updateTouchEndView() {
+    if (this.listItem.classList.contains('list-item__holding')) {
+      this.listItem.classList.remove('list-item__holding');
+    }
+    if (this.listItem.classList.contains('list-item__sorting')) {
+      this.listItem.classList.remove('list-item__sorting');
+    }
+
+    const listElement = this.context.listElement();
+    const listItemElements = listElement.querySelectorAll('.list-item');
+
+    for (let index = 0; index < listItemElements.length; index++) {
+      const listItemElement = listItemElements[index];
+
+      listItemElement.style.transitionProperty = transitionProperties.NONE;
+      listItemElement.style.transform = 'translateY(0px)';
+      setTimeout(() => {
+        listItemElement.style.transitionProperty = transitionProperties.HEIGHT;
+      }, TRANSITION_TIME);
+    }
+  }
+
+  // animation
+  _enterListItemAnimation() {
+    const el = this.listItem;
+    const height = el.offsetHeight;
+
+    this.listItem.style.height = height + 'px';
+    setTimeout(() => {
+      if (el.classList.contains('list-item-transition-enter')) {
+        this.listItem.style.transitionProperty = transitionProperties.MAX_HEIGHT;
+        this.listItem.style.maxHeight = height + 'px';
+        setTimeout(() => {
+          this.listItem.style.transitionProperty = transitionProperties.HEIGHT;
+        }, TRANSITION_TIME);
+      }
+    }, 0);
+  }
+  _moveCurrentListItemAnimation() {
+    const diff = this._calcDiff();
+    const scrollDiff = this.touch.startScrollTop - this.context.listElement().scrollTop;
+
+    this.listItem.style.transform = `translateY(${diff.y - scrollDiff}px)`;
+  }
+  _moveListItemAnimation() {
+    const listElement = this.context.listElement();
+    const listItemElements = listElement.querySelectorAll('.list-item');
+
+    const height = this.listItem.offsetHeight;
+
+    const {currentIndex, targetIndex} = this._calcIndex();
+
+    if (currentIndex !== null && targetIndex !== null) {
+      if (currentIndex <= targetIndex) {
+        for (let index = 0; index < listItemElements.length; index++) {
+          const listItemElement = listItemElements[index];
+
+          if (currentIndex < index && index <= targetIndex) {
+            listItemElement.style.transitionProperty = transitionProperties.TRANSFORM;
+            listItemElement.style.transform = `translateY(-${height}px)`;
+          } else if (currentIndex !== index) {
+            listItemElement.style.transitionProperty = transitionProperties.TRANSFORM;
+            listItemElement.style.transform = 'translateY(0px)';
+          }
+        }
+      }
+      if (targetIndex <= currentIndex) {
+        for (let index = 0; index < listItemElements.length; index++) {
+          const listItemElement = listItemElements[index];
+
+          if (targetIndex <= index && index < currentIndex) {
+            listItemElement.style.transitionProperty = transitionProperties.TRANSFORM;
+            listItemElement.style.transform = `translateY(${height}px)`;
+          } else if (currentIndex !== index) {
+            listItemElement.style.transitionProperty = transitionProperties.TRANSFORM;
+            listItemElement.style.transform = 'translateY(0px)';
+          }
+        }
+      }
+    }
+  }
+  _scrollListView() {
+    const THRESHOLD_HEIGHT = 60;
+
+    const listElement = this.context.listElement();
+    const listContentElement = listElement.querySelector('.list');
+
+    if (!this.timerId) {
+      this.timerId = setInterval(() => {
+        if (
+          this.touch.endY &&
+          0 < listElement.scrollTop &&
+          this.touch.endY < listElement.offsetTop + THRESHOLD_HEIGHT
+        ) {
+          listElement.scrollTop -= 3;
+          this._moveCurrentListItemAnimation();
+          this._moveListItemAnimation();
+        } else if (
+          this.touch.endY &&
+          listElement.scrollTop < listContentElement.offsetHeight - listElement.offsetHeight &&
+          this.touch.endY > listElement.offsetTop + listElement.offsetHeight - THRESHOLD_HEIGHT
+        ) {
+          listElement.scrollTop += 3;
+          this._moveCurrentListItemAnimation();
+          this._moveListItemAnimation();
+        } else {
+          clearTimeout(this.timerId);
+          this.timerId = null;
+        }
+      }, 1000 / 60);
+    }
+  }
+
+  _calcDiff() {
+    let x = this.touch.endX - this.touch.startX;
+    let y = this.touch.endY - this.touch.startY;
+    let time = this.touch.endTime.getTime() - this.touch.startTime.getTime();
 
     time = (time < 0) ? 0 : time;
 
-    if (this.state.endX === null || this.state.endY === null) {
+    if (this.touch.endX === null || this.touch.endY === null) {
       x = 0;
       y = 0;
     }
@@ -122,94 +256,43 @@ export class ListItem extends Component {
       },
     };
   }
-  render() {
-    const style = {};
-    const diff = this._getDiff();
+  _calcIndex() {
+    const diff = this._calcDiff();
+    const listElement = this.context.listElement();
+    const listItemElements = listElement.querySelectorAll('.list-item');
 
-    if (this.state.holding) {
-      const listItemElements = this.context.listElement().querySelectorAll('.list-item');
-      style.transition = 'none';
-      style.transform = `translateY(${diff.y + this.diff}px)`;
+    let currentIndex = null;
+    let targetIndex = null;
 
-      const height = this.listItem.getBoundingClientRect().height;
+    for (let index = 0; index < listItemElements.length; index++) {
+      const listItemElement = listItemElements[index];
+      const scrollTop = listElement.scrollTop;
+      const targetRect = {
+        top: listElement.offsetTop + listItemElement.offsetTop,
+        height: listItemElement.offsetHeight,
+      };
 
-      for (let index = 0; index < listItemElements.length; index++) {
-        const listItemElement = listItemElements[index];
-        const targetRect = listItemElement.getBoundingClientRect();
-        const top = this.state.endY;
-
-        if (listItemElement !== this.listItem) {
-          if (targetRect.top < top && top < targetRect.top + targetRect.height) {
-            if (this.state.startY < targetRect.top) {
-              if (!listItemElement.classList.contains('moving')) {
-                if (listItemElement.style.transform === `translateY(-${height}px)`) {
-                  listItemElement.style.transform = `translateY(0px)`;
-                  listItemElement.classList.add('moving');
-                  setTimeout(() => {
-                    listItemElement.classList.remove('moving')
-                  }, 200);
-                } else {
-                  listItemElement.style.transform = `translateY(-${height}px)`;
-                  listItemElement.classList.add('moving');
-                  this.targetIndex = index;
-                  setTimeout(() => {
-                    listItemElement.classList.remove('moving')
-                  }, 200);
-                }
-              }
-            } else if (targetRect.top + targetRect.height < this.state.startY) {
-              if (!listItemElement.classList.contains('moving')) {
-                if (listItemElement.style.transform === `translateY(${height}px)`) {
-                  listItemElement.style.transform = `translateY(0px)`;
-                  listItemElement.classList.add('moving');
-                  setTimeout(() => {
-                    listItemElement.classList.remove('moving')
-                  }, 200);
-                } else {
-                  listItemElement.style.transform = `translateY(${height}px)`;
-                  listItemElement.classList.add('moving');
-                  this.targetIndex = index;
-                  setTimeout(() => {
-                    listItemElement.classList.remove('moving')
-                  }, 200);
-                }
-              }
-            } else {
-              if (!listItemElement.classList.contains('moving')) {
-                listItemElement.style.transform = `translateY(0px)`;
-                listItemElement.classList.add('moving');
-                setTimeout(() => {
-                  listItemElement.classList.remove('moving')
-                }, 200);
-              }
-            }
-          }
-        } else {
-          this.currentIndex = index;
-        }
+      if (listItemElement === this.listItem) {
+        currentIndex = index;
       }
-    } else {
-      if (this.context.listElement()) {
-        const listItemElements = this.context.listElement().querySelectorAll('.list-item');
-        for (let index = 0; index < listItemElements.length; index++) {
-          listItemElements[index].style.transition = 'none';
-          listItemElements[index].style.transform = `translateY(0px)`;
-          setTimeout(() => {
-            if (this.listItem !== listItemElements[index]) {
-              listItemElements[index].style.transition = '200ms ease-out';
-            }
-          });
-        }
+      if (
+        targetRect.top - scrollTop< this.touch.endY &&
+        this.touch.endY < targetRect.top + targetRect.height - scrollTop
+      ) {
+        targetIndex = index;
       }
     }
 
+    return {
+      currentIndex,
+      targetIndex,
+    };
+  }
+
+  render() {
     return (
       <li
-        className={classNames(
-          "list-item",
-          {"list-item__holding": this.state.holding}
-        )}
-        style={style}
+        className="list-item"
         ref={(listItem) => this.listItem = listItem}
         onTouchStart={this.handleTouchStart}
         onTouchMove={this.handleTouchMove}

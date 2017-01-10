@@ -1,7 +1,7 @@
 import React, {Component, PropTypes} from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
-const TRANSITION_TIME = 1000;
+const TRANSITION_TIME = 200;
 
 export class List extends Component {
   componentDidMount() {

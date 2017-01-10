@@ -1,4 +1,4 @@
-$transition-time: 1000ms;
+$transition-time: 200ms;
 
 /* reset */
 .list-container,
@@ -20,6 +20,7 @@ $transition-time: 1000ms;
 
 /* basic */
 .list-container {
+  position: relative;
   overflow: scroll;
 }
 .list {
@@ -28,8 +29,7 @@ $transition-time: 1000ms;
   .list-item {
     overflow: hidden;
     transition: $transition-time ease-out;
-    transition-property: height, max-height;
-    will-change: height, max-height;
+    will-change: transform, height, max-height;
     .list-item-content {}
     .list-item-background {
       display: none;
@@ -73,7 +73,7 @@ $transition-time: 1000ms;
       background-color: #fff;
 
       &__holding {
-        box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
+        box-shadow: 0 1px 1px 1px rgba(0, 0, 0, 0.2);
         transition-property: box-shadow;
       }
 
