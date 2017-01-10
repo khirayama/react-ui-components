@@ -48,7 +48,6 @@ export default class ListContainer extends Component {
     this.setState({items});
   }
   _handleSort(from, to) {
-    console.log(from, to);
     const items = this.state.items;
     const item = items.splice(from, 1);
     items.splice(to, 0, item[0]);

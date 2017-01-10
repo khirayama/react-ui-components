@@ -9,7 +9,6 @@ const transitionProperties = {
   TRANSFORM: 'transform',
 };
 
-// holdの判定はListItemのみで行う
 export class ListItem extends Component {
   constructor() {
     super();
@@ -88,7 +87,7 @@ export class ListItem extends Component {
 
     // callback
     const {currentIndex, targetIndex} = this._calcIndex();
-    if (this.touch.holding && currentIndex !== null && targetIndex !== null) {
+    if (this.touch.holding && currentIndex !== null && targetIndex !== null && this.context.onSort) {
       this.context.onSort(currentIndex, targetIndex);
     }
 
@@ -109,7 +108,7 @@ export class ListItem extends Component {
   _updateTouchStartView() {
   }
   _updateTouchMoveView() {
-    if (this.touch.holding) {
+    if (this.touch.holding && this.context.onSort) {
       this.listItem.classList.add('list-item__sorting');
 
       this._moveCurrentListItemAnimation();
