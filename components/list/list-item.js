@@ -30,9 +30,15 @@ export class ListItem extends Component {
     this.handleTouchEnd = this._handleTouchEnd.bind(this);
     this.handleTouchHold = this._handleTouchHold.bind(this);
   }
-
   componentDidMount() {
     this._enterListItemAnimation();
+  }
+  getChildContext() {
+    return {
+      holding: () => this.touch.holding,
+      onSwipeLeft: this.props.onSwipeLeft,
+      onSwipeRight: this.props.onSwipeRight,
+    };
   }
 
   // handling event
@@ -46,8 +52,6 @@ export class ListItem extends Component {
       startTime: new Date(),
       timerId: setTimeout(this.handleTouchHold, THRESHOLD_TIME),
     });
-
-    this._updateTouchStartView();
   }
   _handleTouchMove(event) {
     if (this.touch.holding) {
@@ -105,8 +109,6 @@ export class ListItem extends Component {
   }
 
   // update views
-  _updateTouchStartView() {
-  }
   _updateTouchMoveView() {
     if (this.touch.holding && this.context.onSort) {
       this.listItem.classList.add('list-item__sorting');
@@ -233,7 +235,6 @@ export class ListItem extends Component {
       }, 1000 / 60);
     }
   }
-
   _calcDiff() {
     let x = this.touch.endX - this.touch.startX;
     let y = this.touch.endY - this.touch.startY;
@@ -300,6 +301,12 @@ export class ListItem extends Component {
     );
   }
 }
+
+ListItem.childContextTypes = {
+  holding: PropTypes.func,
+  onSwipeLeft: PropTypes.func,
+  onSwipeRight: PropTypes.func,
+};
 
 ListItem.contextTypes = {
   listElement: PropTypes.func,

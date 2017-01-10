@@ -27,6 +27,8 @@ export default class ListContainer extends Component {
     this.handleClickRemoveButton = this._handleClickRemoveButton.bind(this);
     this.handleSort = this._handleSort.bind(this);
     this.handleTouchHold = this._handleTouchHold.bind(this);
+    this.handleSwipeLeft = this._handleSwipeLeft.bind(this);
+    this.handleSwipeRight = this._handleSwipeRight.bind(this);
   }
   _handleClickAddButton() {
     const index = this.state.items.length;
@@ -51,6 +53,12 @@ export default class ListContainer extends Component {
   _handleTouchHold() {
     console.log('touch hold!');
   }
+  _handleSwipeLeft() {
+    console.log('swipe left');
+  }
+  _handleSwipeRight() {
+    console.log('swipe right');
+  }
   _handleSort(from, to) {
     const items = this.state.items;
     const item = items.splice(from, 1);
@@ -64,6 +72,8 @@ export default class ListContainer extends Component {
         <ListItem
           key={item.id}
           onTouchHold={this.handleTouchHold}
+          onSwipeLeft={this.handleSwipeLeft}
+          onSwipeRight={this.handleSwipeRight}
           >
           <ListItemLeftBackground>Left</ListItemLeftBackground>
           <ListItemContent>{item.name}</ListItemContent>

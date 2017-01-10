@@ -50,6 +50,10 @@ $transition-time: 200ms;
         height: 0!important;
       }
     }
+
+    .list-item-content {
+      transition: $transition-time ease-out;
+    }
   }
 }
 
