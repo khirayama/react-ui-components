@@ -81,6 +81,7 @@ $transition-time: 200ms;
 /*     .list-item__sorting {} */
 /*     .list-item-content {} */
 /*     .list-item-background {} */
+/*     .list-item-background__will-swipe {} */
 /*     .list-item-left-background {} */
 /*     .list-item-right-background {} */
 /*   } */
@@ -104,12 +105,19 @@ $transition-time: 200ms;
         background-color: red;
         padding: 12px;
       }
-      .list-item-background {}
       .list-item-left-background {
         background-color: blue;
       }
       .list-item-right-background {
         background-color: green;
+      }
+      .list-item-background {
+        transition: $transition-time ease-out;
+        transition-property: background, color;
+        &__will-swipe {
+          background: brown;
+          color: #fff;
+        }
       }
     }
   }

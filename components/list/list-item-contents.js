@@ -1,6 +1,5 @@
 import React, {Component, PropTypes} from 'react';
 
-const THRESHOLD_WIDTH = 120;
 const THRESHOLD_DELTA = 0.8;
 const TRANSITION_TIME = 200;
 
@@ -74,20 +73,8 @@ export class ListItemContent extends Component {
     const listItemElement = this.context.listItemElement();
 
     if (!this.context.holding()) {
-      listItemElement.classList.add('list-item__moving');
-      this.listItemContent.style.transform = `translateX(${diff.x}px)`;
-
-      if (diff.x > 0) {
-        const leftBackgroundElement = listItemElement.querySelector('.list-item-left-background');
-        const rightBackgroundElement = listItemElement.querySelector('.list-item-right-background');
-        leftBackgroundElement.style.display = 'inline-block';
-        rightBackgroundElement.style.display = 'none';
-      } else if (diff.x < 0) {
-        const leftBackgroundElement = listItemElement.querySelector('.list-item-left-background');
-        const rightBackgroundElement = listItemElement.querySelector('.list-item-right-background');
-        leftBackgroundElement.style.display = 'none';
-        rightBackgroundElement.style.display = 'inline-block';
-      }
+      this._updateListItemContentView();
+      this._updateBackgroundView();
     }
   }
   _updateTouchEndView() {
@@ -111,6 +98,7 @@ export class ListItemContent extends Component {
   }
   _isLeftSwipe() {
     const diff = this._calcDiff();
+    const THRESHOLD_WIDTH = window.innerWidth / 4;
 
     return (
       (Math.abs(diff.x) > THRESHOLD_WIDTH && diff.x < 0) ||
@@ -119,6 +107,7 @@ export class ListItemContent extends Component {
   }
   _isRightSwipe() {
     const diff = this._calcDiff();
+    const THRESHOLD_WIDTH = window.innerWidth / 4;
 
     return (
       (Math.abs(diff.x) > THRESHOLD_WIDTH && 0 < diff.x) ||
@@ -171,6 +160,61 @@ export class ListItemContent extends Component {
     }
 
     return currentIndex;
+  }
+  _updateListItemContentView() {
+    const diff = this._calcDiff();
+    const listItemElement = this.context.listItemElement();
+
+    listItemElement.classList.add('list-item__moving');
+    this.listItemContent.style.transform = `translateX(${diff.x}px)`;
+  }
+  _updateBackgroundView() {
+    const diff = this._calcDiff();
+    const listItemElement = this.context.listItemElement();
+    const leftBackgroundElement = listItemElement.querySelector('.list-item-left-background');
+    const rightBackgroundElement = listItemElement.querySelector('.list-item-right-background');
+
+    if (diff.x > 0) {
+      if (leftBackgroundElement) {
+        leftBackgroundElement.style.display = 'inline-block';
+      }
+      if (rightBackgroundElement) {
+        rightBackgroundElement.style.display = 'none';
+      }
+    } else if (diff.x < 0) {
+      if (leftBackgroundElement) {
+        leftBackgroundElement.style.display = 'none';
+      }
+      if (rightBackgroundElement) {
+        rightBackgroundElement.style.display = 'inline-block';
+      }
+    }
+
+    if (this._isRightSwipe()) {
+      if (leftBackgroundElement) {
+        if (!leftBackgroundElement.classList.contains('list-item-background__will-swipe')) {
+          leftBackgroundElement.classList.add('list-item-background__will-swipe');
+        }
+      }
+    } else if (this._isLeftSwipe()) {
+      if (rightBackgroundElement) {
+        if (!rightBackgroundElement.classList.contains('list-item-background__will-swipe')) {
+          rightBackgroundElement.classList.add('list-item-background__will-swipe');
+        }
+      }
+    } else {
+      if (leftBackgroundElement) {
+        if (leftBackgroundElement.classList.contains('list-item-background__will-swipe')) {
+          leftBackgroundElement.classList.remove('list-item-background__will-swipe');
+        }
+      }
+      if (rightBackgroundElement) {
+        if (rightBackgroundElement.classList.contains('list-item-background__will-swipe')) {
+          rightBackgroundElement.classList.remove('list-item-background__will-swipe');
+        }
+      }
+    }
+
   }
   render() {
     return (
