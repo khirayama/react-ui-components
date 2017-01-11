@@ -85,10 +85,12 @@ export class TabContentList extends Component {
     const diff = this._calcDiff();
 
     if (this.touch.endX !== null && this.touch.endY !== null) {
-      if (this.context.currentIndex === 0 && diff.x > 0) {
+      if (
+        (this.context.currentIndex === 0 && diff.x > 0) ||
+        (this.context.currentIndex === this.props.children.length - 1 && diff.x < 0)
+      ) {
         diff.x = 0;
-      } else if (this.context.currentIndex === this.props.children.length - 1 && diff.x < 0) {
-        diff.x = 0;
+        diff.delta.x = 0;
       }
     }
 
@@ -132,13 +134,11 @@ export class TabContentList extends Component {
     this.tabContentList.style.transition = 'none';
   }
   _updateTouchEndView() {
-    const diff = this._calcFilteredDiff();
-
     if (this.tabContentList.classList.contains('tab-content-list__moving')) {
       this.tabContentList.classList.remove('tab-content-list__moving');
     }
 
-    this.tabContentList.style.left = `calc(-${this.context.currentIndex * 100}% + ${diff.x}px)`;
+    this.tabContentList.style.left = `calc(-${this.context.currentIndex * 100}%)`;
     this.tabContentList.style.transition = 'left .2s ease-out';
   }
   render() {
@@ -146,6 +146,7 @@ export class TabContentList extends Component {
     const style = {
       width: (this.props.children.length * 100) + '%',
       left: `calc(-${this.context.currentIndex * 100}% + ${diff.x}px)`,
+      transition: 'left .2s ease-out',
     };
 
     return (

@@ -294,13 +294,13 @@ export class ListItem extends Component {
 
   render() {
     return (
-      <li
+      <div
         className="list-item"
         ref={(listItem) => this.listItem = listItem}
         onTouchStart={this.handleTouchStart}
         onTouchMove={this.handleTouchMove}
         onTouchEnd={this.handleTouchEnd}
-        >{this.props.children}</li>
+        >{this.props.children}</div>
     );
   }
 }

@@ -21,14 +21,14 @@ export class List extends Component {
         className="list"
         ref={(listElement) => this.listElement = listElement}
       >
-        <ul className="list-content">
+        <div className="list-content">
           <ReactCSSTransitionGroup
             transitionAppear={false}
             transitionName="list-item-transition"
             transitionEnterTimeout={TRANSITION_TIME}
             transitionLeaveTimeout={TRANSITION_TIME}
           >{this.props.children}</ReactCSSTransitionGroup>
-        </ul>
+        </div>
       </section>
     );
   }
