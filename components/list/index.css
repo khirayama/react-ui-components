@@ -99,17 +99,28 @@ div {
   border: 0;
   font-family: sans-serif;
 }
+html,
+body,
+.list-component,
+.screen {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
 
-.button {
-  padding: 8px;
-  margin: 8px;
-  border-radius: 2px;
-  border: solid 1px #aaa;
-  display: inline-block;
+.buttons-container {
+  height: 52px;
+  .button {
+    padding: 8px;
+    margin: 8px;
+    border-radius: 2px;
+    border: solid 1px #aaa;
+    display: inline-block;
+  }
 }
 
 .list-container {
-  height: 500px;
+  height: calc(100% - 52px);
   .list {
     border-top: solid 1px #aaa;
     .list-item {

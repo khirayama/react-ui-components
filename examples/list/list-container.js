@@ -15,7 +15,7 @@ export default class ListContainer extends Component {
     const items = [];
     for (let index = 0; index < 5; index++) {
       items.push({
-        id: index,
+        id: index + (new Date()).getTime(),
         name: `Item ${index}`,
       });
     }
@@ -31,10 +31,10 @@ export default class ListContainer extends Component {
     this.handleSwipeRight = this._handleSwipeRight.bind(this);
   }
   _handleClickAddButton() {
-    const index = this.state.items.length;
     const items = this.state.items.concat();
+    const index = items.length;
     items.push({
-      id: index,
+      id: index + (new Date()).getTime(),
       name: `Item ${index}`,
     });
 
@@ -59,7 +59,6 @@ export default class ListContainer extends Component {
         return true;
       }
     });
-    console.log(index, items);
 
     this.setState({items});
   }
@@ -81,6 +80,7 @@ export default class ListContainer extends Component {
           onTouchHold={this.handleTouchHold}
           onSwipeLeft={this.handleSwipeLeft}
           onSwipeRight={this.handleSwipeRight}
+          througnRight={false}
           >
           <ListItemLeftBackground>
             <div>L</div>
@@ -94,9 +94,11 @@ export default class ListContainer extends Component {
     });
 
     return (
-      <section>
-        <div className="button" onClick={this.handleClickAddButton}>add item</div>
-        <div className="button" onClick={this.handleClickRemoveButton}>remove item</div>
+      <section className="screen">
+        <div className="buttons-container">
+          <div className="button" onClick={this.handleClickAddButton}>add item</div>
+          <div className="button" onClick={this.handleClickRemoveButton}>remove item</div>
+        </div>
         <List
           onSort={this.handleSort}
           >{listItemElements}</List>

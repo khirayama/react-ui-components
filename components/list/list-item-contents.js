@@ -1,7 +1,12 @@
 import React, {Component, PropTypes} from 'react';
 
-const THRESHOLD_DELTA = 0.8;
 const TRANSITION_TIME = 175;
+const THRESHOLD_DELTA = 0.8;
+
+const transitionProperties = {
+  NONE: 'none',
+  TRANSFORM: 'transform',
+};
 
 export class ListItemContent extends Component {
   constructor() {
@@ -47,15 +52,21 @@ export class ListItemContent extends Component {
   }
   _handleTouchEnd() {
     this._updateTouchEndView();
+
     const currentIndex = this._calcCurrentIndex();
+    const props = this.context.getProps();
 
     if (this._isRightSwipe()) {
       setTimeout(() => {
-        this.context.onSwipeRight(currentIndex);
+        if (props.onSwipeRight) {
+          props.onSwipeRight(currentIndex);
+        }
       }, TRANSITION_TIME);
     } else if (this._isLeftSwipe()) {
       setTimeout(() => {
-        this.context.onSwipeLeft(currentIndex);
+        if (props.onSwipeLeft) {
+          props.onSwipeLeft(currentIndex);
+        }
       }, TRANSITION_TIME);
     }
 
@@ -80,13 +91,18 @@ export class ListItemContent extends Component {
   _updateTouchEndView() {
     const diff = this._calcDiff();
     const listItemElement = this.context.listItemElement();
+    const props = this.context.getProps();
 
-    this.listItemContent.style.transitionProperty = 'transform';
+    this.listItemContent.style.transitionProperty = transitionProperties.TRANSFORM;
 
-    if (this._isRightSwipe()) {
-      this.listItemContent.style.transform = `translateX(100%)`;
-    } else if (this._isLeftSwipe()) {
-      this.listItemContent.style.transform = `translateX(-100%)`;
+    if (this._isRightSwipe() && props.througnRight !== false) {
+      if (diff.x > 0 && !props.onSwipeRight) {
+        this.listItemContent.style.transform = `translateX(100%)`;
+      }
+    } else if (this._isLeftSwipe() && props.througnLeft !== false) {
+      if (diff.x < 0 && props.onSwipeLeft) {
+        this.listItemContent.style.transform = `translateX(-100%)`;
+      }
     } else {
       this.listItemContent.style.transform = `translateX(0px)`;
     }
@@ -163,12 +179,20 @@ export class ListItemContent extends Component {
   }
   _updateListItemContentView() {
     const diff = this._calcDiff();
+    const props = this.context.getProps();
     const listItemElement = this.context.listItemElement();
 
     if (Math.abs(diff.x) > Math.abs(diff.y)) {
+      let diffX = diff.x;
+      if (diff.x < 0 && !props.onSwipeLeft) {
+        diffX = 0;
+      }
+      if (diff.x > 0 && !props.onSwipeRight) {
+        diffX = 0;
+      }
       listItemElement.classList.add('list-item__moving');
-      this.listItemContent.style.transitionProperty = 'none';
-      this.listItemContent.style.transform = `translateX(${diff.x}px)`;
+      this.listItemContent.style.transitionProperty = transitionProperties.NONE;
+      this.listItemContent.style.transform = `translateX(${diffX}px)`;
     }
   }
   _updateBackgroundView() {
@@ -236,8 +260,7 @@ ListItemContent.contextTypes = {
   listElement: PropTypes.func,
   listItemElement: PropTypes.func,
   holding: PropTypes.func,
-  onSwipeLeft: PropTypes.func,
-  onSwipeRight: PropTypes.func,
+  getProps: PropTypes.func,
 };
 
 export class ListItemLeftBackground extends Component {

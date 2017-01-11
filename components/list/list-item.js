@@ -2,9 +2,12 @@ import React, {Component, PropTypes} from 'react';
 import classNames from 'classnames';
 
 const TRANSITION_TIME = 175;
+const THRESHOLD_HOLD_TIME = 500;
+const THRESHOLD_SCROLL_HEIGHT = 60;
 
 const transitionProperties = {
   NONE: 'none',
+  ALL: 'all',
   HEIGHT: 'height',
   MAX_HEIGHT: 'max-height',
   TRANSFORM: 'transform',
@@ -38,21 +41,18 @@ export class ListItem extends Component {
     return {
       listItemElement: () => this.listItem,
       holding: () => this.touch.holding,
-      onSwipeLeft: this.props.onSwipeLeft,
-      onSwipeRight: this.props.onSwipeRight,
+      getProps: () => this.props,
     };
   }
 
   // handling event
   _handleTouchStart(event) {
-    const THRESHOLD_TIME = 500;
-
     this.touch = Object.assign({}, this.touch, {
       startX: event.touches[0].clientX,
       startY: event.touches[0].clientY,
       startScrollTop: this.context.listElement().scrollTop,
       startTime: new Date(),
-      timerId: setTimeout(this.handleTouchHold, THRESHOLD_TIME),
+      timerId: setTimeout(this.handleTouchHold, THRESHOLD_HOLD_TIME),
     });
   }
   _handleTouchMove(event) {
@@ -122,6 +122,7 @@ export class ListItem extends Component {
   }
   _updateTouchHoldView() {
     if (!this.listItem.classList.contains('list-item__holding')) {
+      this.listItem.style.transitionProperty = transitionProperties.ALL;
       this.listItem.classList.add('list-item__holding');
     }
   }
@@ -209,8 +210,6 @@ export class ListItem extends Component {
     }
   }
   _scrollListView() {
-    const THRESHOLD_HEIGHT = 60;
-
     const listElement = this.context.listElement();
     const listContentElement = listElement.querySelector('.list');
 
@@ -219,7 +218,7 @@ export class ListItem extends Component {
         if (
           this.touch.endY &&
           0 < listElement.scrollTop &&
-          this.touch.endY < listElement.offsetTop + THRESHOLD_HEIGHT
+          this.touch.endY < listElement.offsetTop + THRESHOLD_SCROLL_HEIGHT
         ) {
           listElement.scrollTop -= 3;
           this._moveCurrentListItemAnimation();
@@ -227,7 +226,7 @@ export class ListItem extends Component {
         } else if (
           this.touch.endY &&
           listElement.scrollTop < listContentElement.offsetHeight - listElement.offsetHeight &&
-          this.touch.endY > listElement.offsetTop + listElement.offsetHeight - THRESHOLD_HEIGHT
+          this.touch.endY > listElement.offsetTop + listElement.offsetHeight - THRESHOLD_SCROLL_HEIGHT
         ) {
           listElement.scrollTop += 3;
           this._moveCurrentListItemAnimation();
@@ -309,8 +308,7 @@ export class ListItem extends Component {
 ListItem.childContextTypes = {
   listItemElement: PropTypes.func,
   holding: PropTypes.func,
-  onSwipeLeft: PropTypes.func,
-  onSwipeRight: PropTypes.func,
+  getProps: PropTypes.func,
 };
 
 ListItem.contextTypes = {
