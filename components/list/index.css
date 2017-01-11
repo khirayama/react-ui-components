@@ -89,7 +89,9 @@ $transition-time-fast: 100ms;
 /* } */
 
 /* custom */
-* {
+html,
+body,
+div {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
