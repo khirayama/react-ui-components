@@ -6,14 +6,13 @@ export class TabContentList extends Component {
     super();
 
     this.touch = {
-      _startX: null,
-      _startY: null,
-      _startTime: new Date(),
-      _endX: null,
-      _endY: null,
-      _endTime: new Date(),
-      _moving: false,
-      _transitionProperty: 'left .2s ease-out',
+      startX: null,
+      startY: null,
+      startTime: new Date(),
+      endX: null,
+      endY: null,
+      endTime: new Date(),
+      moving: false,
     };
 
     this.handleTouchStart = this._handleTouchStart.bind(this);
@@ -31,21 +30,19 @@ export class TabContentList extends Component {
     event.stopPropagation();
 
     this.touch = Object.assign({}, this.touch, {
-      _startX: event.touches[0].clientX,
-      _startY: event.touches[0].clientY,
-      _startTime: new Date(),
-      _transitionProperty: 'none',
+      startX: event.touches[0].clientX,
+      startY: event.touches[0].clientY,
+      startTime: new Date(),
     });
   }
   _handleTouchMove(event) {
     event.stopPropagation();
 
     this.touch = Object.assign({}, this.touch, {
-      _endX: event.touches[0].clientX,
-      _endY: event.touches[0].clientY,
-      _endTime: new Date(),
-      _moving: true,
-      _transitionProperty: 'none',
+      endX: event.touches[0].clientX,
+      endY: event.touches[0].clientY,
+      endTime: new Date(),
+      moving: true,
     });
 
     this._updateTouchMoveView();
@@ -58,7 +55,7 @@ export class TabContentList extends Component {
     const THRESHOLD_WIDTH = window.screen.width / 3;
     const THRESHOLD_DELTAX = 0.6;
 
-    const diff = this._getDiff();
+    const diff = this._calcFilteredDiff();
 
     if (THRESHOLD_WIDTH < Math.abs(diff.x)) {
       if (diff.x > 0) {
@@ -75,32 +72,36 @@ export class TabContentList extends Component {
     }
 
     this.touch = Object.assign({}, this.touch, {
-      _startX: null,
-      _startY: null,
-      _startTime: new Date(),
-      _endX: null,
-      _endY: null,
-      _endTime: new Date(),
-      _moving: false,
-      _transitionProperty: 'left .2s ease-out',
+      startX: null,
+      startY: null,
+      startTime: new Date(),
+      endX: null,
+      endY: null,
+      endTime: new Date(),
+      moving: false,
     });
-
-    this.tabContentList.style.transition = this.touch._transitionProperty;
   }
-  _getDiff() {
-    let x = this.touch._endX - this.touch._startX;
-    let y = this.touch._endY - this.touch._startY;
-    let time = this.touch._endTime.getTime() - this.touch._startTime.getTime();
+  _calcFilteredDiff() {
+    const diff = this._calcDiff();
+
+    if (this.touch.endX !== null && this.touch.endY !== null) {
+      if (this.context.currentIndex === 0 && diff.x > 0) {
+        diff.x = 0;
+      } else if (this.context.currentIndex === this.props.children.length - 1 && diff.x < 0) {
+        diff.x = 0;
+      }
+    }
+
+    return diff;
+  }
+  _calcDiff() {
+    let x = this.touch.endX - this.touch.startX;
+    let y = this.touch.endY - this.touch.startY;
+    let time = this.touch.endTime.getTime() - this.touch.startTime.getTime();
 
     time = (time < 0) ? 0 : time;
 
-    if (this.touch._endX !== null && this.touch._endY !== null) {
-      if (this.context.currentIndex === 0 && x > 0) {
-        x = 0;
-      } else if (this.context.currentIndex === this.props.children.length - 1 && x < 0) {
-        x = 0;
-      }
-    } else {
+    if (this.touch.endX === null || this.touch.endY === null) {
       x = 0;
       y = 0;
     }
@@ -121,31 +122,30 @@ export class TabContentList extends Component {
     this.context.setCurrentIndex(this.context.currentIndex - 1);
   }
   _updateTouchMoveView() {
-    const diff = this._getDiff();
+    const diff = this._calcFilteredDiff();
 
     if (this.touch._moving && diff.x !== 0) {
       this.tabContentList.classList.add('tab-content-list__moving');
     }
 
     this.tabContentList.style.left = `calc(-${this.context.currentIndex * 100}% + ${diff.x}px)`;
-    this.tabContentList.style.transition = this.touch._transitionProperty;
+    this.tabContentList.style.transition = 'none';
   }
   _updateTouchEndView() {
-    const diff = this._getDiff();
+    const diff = this._calcFilteredDiff();
 
     if (this.tabContentList.classList.contains('tab-content-list__moving')) {
       this.tabContentList.classList.remove('tab-content-list__moving');
     }
 
     this.tabContentList.style.left = `calc(-${this.context.currentIndex * 100}% + ${diff.x}px)`;
-    this.tabContentList.style.transition = this.touch._transitionProperty;
+    this.tabContentList.style.transition = 'left .2s ease-out';
   }
   render() {
-    const diff = this._getDiff();
+    const diff = this._calcFilteredDiff();
     const style = {
       width: (this.props.children.length * 100) + '%',
       left: `calc(-${this.context.currentIndex * 100}% + ${diff.x}px)`,
-      transition: this.touch._transitionProperty,
     };
 
     return (
