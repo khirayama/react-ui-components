@@ -5,5 +5,7 @@ import ReactDOM from 'react-dom';
 import ListContainer from './list/list-container';
 
 window.addEventListener('DOMContentLoaded', () => {
-  ReactDOM.render(<ListContainer/>, document.querySelector('.list-component'));
+  if (document.querySelector('.list-component')) {
+    ReactDOM.render(<ListContainer/>, document.querySelector('.list-component'));
+  }
 });
