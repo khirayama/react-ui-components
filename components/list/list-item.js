@@ -47,6 +47,8 @@ export class ListItem extends Component {
 
   // handling event
   _handleTouchStart(event) {
+    event.stopPropagation();
+
     this.touch = Object.assign({}, this.touch, {
       startX: event.touches[0].clientX,
       startY: event.touches[0].clientY,
@@ -56,9 +58,10 @@ export class ListItem extends Component {
     });
   }
   _handleTouchMove(event) {
+    event.stopPropagation();
+
     if (this.touch.holding) {
       event.preventDefault();
-      event.stopPropagation();
     }
 
     const distance = Math.sqrt(

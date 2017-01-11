@@ -21,11 +21,11 @@ $transition-time-fast: 100ms;
 
 /* basic */
 .list {
+  list-style: none;
   position: relative;
   overflow: scroll;
 }
 .list-content {
-  list-style: none;
   width: 100%;
   .list-item {
     overflow: hidden;

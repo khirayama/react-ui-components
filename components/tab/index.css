@@ -17,6 +17,7 @@
 .tab {
   .tab-list {
     display: flex;
+    list-style: none;
 
     .tab-list-item {
       flex: 1;
@@ -29,6 +30,7 @@
   .tab-content-list {
     display: flex;
     position: relative;
+    list-style: none;
     will-change: left;
 
     .tab-content-list-item {
