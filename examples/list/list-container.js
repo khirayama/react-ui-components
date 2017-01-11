@@ -82,17 +82,21 @@ export default class ListContainer extends Component {
           onSwipeLeft={this.handleSwipeLeft}
           onSwipeRight={this.handleSwipeRight}
           >
-          <ListItemLeftBackground>Left</ListItemLeftBackground>
+          <ListItemLeftBackground>
+            <div>L</div>
+          </ListItemLeftBackground>
           <ListItemContent>{item.name}</ListItemContent>
-          <ListItemRightBackground>Right</ListItemRightBackground>
+          <ListItemRightBackground>
+            <div>R</div>
+          </ListItemRightBackground>
         </ListItem>
       );
     });
 
     return (
       <section>
-        <div onClick={this.handleClickAddButton}>add item</div>
-        <div onClick={this.handleClickRemoveButton}>remove item</div>
+        <div className="button" onClick={this.handleClickAddButton}>add item</div>
+        <div className="button" onClick={this.handleClickRemoveButton}>remove item</div>
         <List
           onSort={this.handleSort}
           >{listItemElements}</List>

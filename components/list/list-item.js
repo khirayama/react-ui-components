@@ -1,7 +1,8 @@
 import React, {Component, PropTypes} from 'react';
 import classNames from 'classnames';
 
-const TRANSITION_TIME = 200;
+const TRANSITION_TIME = 175;
+
 const transitionProperties = {
   NONE: 'none',
   HEIGHT: 'height',
@@ -151,6 +152,7 @@ export class ListItem extends Component {
     const el = this.listItem;
     const height = el.offsetHeight;
 
+    this.listItem.style.transitionProperty = transitionProperties.HEIGHT;
     this.listItem.style.height = height + 'px';
     setTimeout(() => {
       if (el.classList.contains('list-item-transition-enter')) {
@@ -166,6 +168,7 @@ export class ListItem extends Component {
     const diff = this._calcDiff();
     const scrollDiff = this.touch.startScrollTop - this.context.listElement().scrollTop;
 
+    this.listItem.style.transitionProperty = transitionProperties.NONE;
     this.listItem.style.transform = `translateY(${diff.y - scrollDiff}px)`;
   }
   _moveListItemAnimation() {

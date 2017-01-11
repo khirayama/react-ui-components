@@ -1,7 +1,7 @@
 import React, {Component, PropTypes} from 'react';
 
 const THRESHOLD_DELTA = 0.8;
-const TRANSITION_TIME = 200;
+const TRANSITION_TIME = 175;
 
 export class ListItemContent extends Component {
   constructor() {
@@ -165,9 +165,11 @@ export class ListItemContent extends Component {
     const diff = this._calcDiff();
     const listItemElement = this.context.listItemElement();
 
-    listItemElement.classList.add('list-item__moving');
-    this.listItemContent.style.transitionProperty = 'none';
-    this.listItemContent.style.transform = `translateX(${diff.x}px)`;
+    if (Math.abs(diff.x) > Math.abs(diff.y)) {
+      listItemElement.classList.add('list-item__moving');
+      this.listItemContent.style.transitionProperty = 'none';
+      this.listItemContent.style.transform = `translateX(${diff.x}px)`;
+    }
   }
   _updateBackgroundView() {
     const diff = this._calcDiff();

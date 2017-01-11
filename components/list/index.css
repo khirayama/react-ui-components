@@ -1,4 +1,4 @@
-$transition-time: 200ms;
+$transition-time: 175ms;
 $transition-time-fast: 100ms;
 
 /* reset */
@@ -89,8 +89,25 @@ $transition-time-fast: 100ms;
 /* } */
 
 /* custom */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  outline: 0;
+  border: 0;
+  font-family: sans-serif;
+}
+
+.button {
+  padding: 8px;
+  margin: 8px;
+  border-radius: 2px;
+  border: solid 1px #aaa;
+  display: inline-block;
+}
+
 .list-container {
-  height: 300px;
+  height: 500px;
   .list {
     border-top: solid 1px #aaa;
     .list-item {
@@ -103,21 +120,38 @@ $transition-time-fast: 100ms;
       }
 
       .list-item-content {
-        background-color: red;
-        padding: 12px;
-      }
-      .list-item-left-background {
-        background-color: blue;
-      }
-      .list-item-right-background {
-        background-color: green;
+        background-color: #fff;
+        padding: 18px 12px;
       }
       .list-item-background {
-        transition: $transition-time ease-out;
-        transition-property: background, color;
+        color: #fff;
+        & div {
+          font-size: 18px;
+          font-weight: bold;
+          display: flex;
+          align-items: center;
+          height: 100%;
+          padding: 12px;
+          transition: $transition-time ease-out;
+          transition-property: font-size;
+        }
+
         &__will-swipe {
-          background: brown;
-          color: #fff;
+          & div {
+            font-size: 32px;
+          }
+        }
+      }
+      .list-item-left-background {
+        background-color: #4caf50;
+        & div {
+          justify-content: flex-start;
+        }
+      }
+      .list-item-right-background {
+        background-color: #ff9800;
+        & div {
+          justify-content: flex-end;
         }
       }
     }
