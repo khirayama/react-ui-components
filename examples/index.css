@@ -32,9 +32,9 @@ body,
 }
 
 /* list custom */
-.list-container {
+.list {
   height: calc(100% - 52px);
-  .list {
+  .list-content {
     border-top: solid 1px #aaa;
     .list-item {
       border-bottom: solid 1px #aaa;

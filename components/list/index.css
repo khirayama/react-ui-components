@@ -2,8 +2,8 @@ $transition-time: 175ms;
 $transition-time-fast: 100ms;
 
 /* reset */
-.list-container,
 .list,
+.list-content,
 .list-item,
 .list-item-content ,
 .list-item-background,
@@ -20,11 +20,11 @@ $transition-time-fast: 100ms;
 }
 
 /* basic */
-.list-container {
+.list {
   position: relative;
   overflow: scroll;
 }
-.list {
+.list-content {
   list-style: none;
   width: 100%;
   .list-item {
@@ -77,13 +77,15 @@ $transition-time-fast: 100ms;
 
 /* structure */
 /* .list { */
-/*   .list-item { */
-/*     .list-item__holding {} */
-/*     .list-item__sorting {} */
-/*     .list-item-content {} */
-/*     .list-item-background {} */
-/*     .list-item-background__will-swipe {} */
-/*     .list-item-left-background {} */
-/*     .list-item-right-background {} */
+/*   .list-content { */
+/*     .list-item { */
+/*       .list-item__holding {} */
+/*       .list-item__sorting {} */
+/*       .list-item-content {} */
+/*       .list-item-background {} */
+/*       .list-item-background__will-swipe {} */
+/*       .list-item-left-background {} */
+/*       .list-item-right-background {} */
+/*     } */
 /*   } */
 /* } */

@@ -5,7 +5,7 @@ const TRANSITION_TIME = 175;
 
 export class List extends Component {
   componentDidMount() {
-    document.querySelector('.list').addEventListener('contextmenu', event => {
+    document.querySelector('.list-content').addEventListener('contextmenu', event => {
       event.preventDefault();
     });
   }
@@ -18,10 +18,10 @@ export class List extends Component {
   render() {
     return (
       <section
-        className="list-container"
+        className="list"
         ref={(listElement) => this.listElement = listElement}
       >
-        <ul className="list">
+        <ul className="list-content">
           <ReactCSSTransitionGroup
             transitionAppear={false}
             transitionName="list-item-transition"
