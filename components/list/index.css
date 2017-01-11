@@ -1,4 +1,5 @@
 $transition-time: 200ms;
+$transition-time-fast: 100ms;
 
 /* reset */
 .list-container,
@@ -48,7 +49,7 @@ $transition-time: 200ms;
     }
 
     .list-item-content {
-      transition: $transition-time ease-out;
+      transition: $transition-time-fast ease-out;
     }
 
     .list-item-background {

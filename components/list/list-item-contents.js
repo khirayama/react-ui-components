@@ -166,6 +166,7 @@ export class ListItemContent extends Component {
     const listItemElement = this.context.listItemElement();
 
     listItemElement.classList.add('list-item__moving');
+    this.listItemContent.style.transitionProperty = 'none';
     this.listItemContent.style.transform = `translateX(${diff.x}px)`;
   }
   _updateBackgroundView() {
