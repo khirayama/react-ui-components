@@ -47,8 +47,6 @@ export class ListItem extends Component {
 
   // handling event
   _handleTouchStart(event) {
-    event.stopPropagation();
-
     this.touch = Object.assign({}, this.touch, {
       startX: event.touches[0].clientX,
       startY: event.touches[0].clientY,
@@ -58,7 +56,14 @@ export class ListItem extends Component {
     });
   }
   _handleTouchMove(event) {
-    event.stopPropagation();
+    const diff = this._calcDiff();
+
+    if (
+      (this.props.onSwipeLeft && diff.x < 20) ||
+      (this.props.onSwipeRight && diff.x > -20)
+    ) {
+      event.stopPropagation();
+    }
 
     if (this.touch.holding) {
       event.preventDefault();
