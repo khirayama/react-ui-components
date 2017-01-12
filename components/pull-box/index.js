@@ -69,17 +69,23 @@ export class PullBox extends Component {
     } else {
       this.pullBoxMessage.classList.remove('pull-box-message__pulled');
     }
-    this.pullBoxContent.style.transitionProperty = 'none';
-    this.pullBoxContent.style.transform = `translateY(${diff.y}px)`;
+    if (diff.y > 0 && this.pullBox.scrollTop < 20) {
+      this.pullBoxContent.style.transitionProperty = 'none';
+      this.pullBoxContent.style.transform = `translateY(${diff.y}px)`;
+    }
   }
   _updateTouchEndView() {
-    this.pullBoxContent.style.transition = '175ms ease-out';
-    this.pullBoxContent.style.transitionProperty = 'transform';
-    this.pullBoxContent.style.transform = `translateY(${this.pullBoxMessage.offsetHeight}px)`;
+    const diff = this._calcDiff();
 
-    this.props.onRelease(() => {
-      this.pullBoxContent.style.transform = `translateY(0px)`;
-    });
+    if (window.innerHeight / 4 < Math.abs(diff.y)) {
+      this.pullBoxContent.style.transition = '175ms ease-out';
+      this.pullBoxContent.style.transitionProperty = 'transform';
+      this.pullBoxContent.style.transform = `translateY(${this.pullBoxMessage.offsetHeight}px)`;
+
+      this.props.onRelease(() => {
+        this.pullBoxContent.style.transform = `translateY(0px)`;
+      });
+    }
   }
   _calcDiff() {
     let x = this.touch.endX - this.touch.startX;
@@ -104,7 +110,10 @@ export class PullBox extends Component {
   }
   render() {
     return (
-      <section className="pull-box">
+      <section
+        className="pull-box"
+        ref={(pullBox) => this.pullBox = pullBox}
+        >
         <div
           className="pull-box-content"
           ref={(pullBoxContent) => this.pullBoxContent = pullBoxContent}

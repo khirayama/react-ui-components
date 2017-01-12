@@ -35,11 +35,13 @@ export class ListItemContent extends Component {
   _handleTouchMove(event) {
     const diff = this._calcDiff();
     const props = this.context.getProps();
+    const touch = this.context.getTouch();
 
-    if (!this.context.holding() && diff.x <= 0 && props.onSwipeLeft) {
+    clearTimeout(touch.timerId);
+    if (Math.abs(diff.x) >= Math.abs(diff.y) && !this.context.holding() && diff.x <= 0 && props.onSwipeLeft) {
       event.stopPropagation();
     }
-    if (!this.context.holding() && diff.x >= 0 && props.onSwipeRight) {
+    if (Math.abs(diff.x) >= Math.abs(diff.y) && !this.context.holding() && diff.x >= 0 && props.onSwipeRight) {
       event.stopPropagation();
     }
 
@@ -271,6 +273,7 @@ ListItemContent.contextTypes = {
   listItemElement: PropTypes.func,
   holding: PropTypes.func,
   getProps: PropTypes.func,
+  getTouch: PropTypes.func,
 };
 
 export class ListItemLeftBackground extends Component {

@@ -42,6 +42,7 @@ export class ListItem extends Component {
       listItemElement: () => this.listItem,
       holding: () => this.touch.holding,
       getProps: () => this.props,
+      getTouch: () => this.touch,
     };
   }
 
@@ -311,6 +312,7 @@ ListItem.childContextTypes = {
   listItemElement: PropTypes.func,
   holding: PropTypes.func,
   getProps: PropTypes.func,
+  getTouch: PropTypes.func,
 };
 
 ListItem.contextTypes = {

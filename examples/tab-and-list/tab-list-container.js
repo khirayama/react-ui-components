@@ -13,7 +13,6 @@ import {
   ListItemLeftBackground,
   ListItemRightBackground,
 } from '../../components/list';
-import {PullBox} from '../../components/pull-box';
 
 export default class TabContainer extends Component {
   constructor() {
