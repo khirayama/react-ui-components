@@ -214,7 +214,7 @@ export class ListItem extends Component {
   }
   _scrollListView() {
     const listElement = this.context.listElement();
-    const listContentElement = listElement.querySelector('.list');
+    const listContentElement = listElement.querySelector('.list-content');
 
     if (!this.timerId) {
       this.timerId = setInterval(() => {
