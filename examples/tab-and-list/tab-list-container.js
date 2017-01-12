@@ -13,16 +13,17 @@ import {
   ListItemLeftBackground,
   ListItemRightBackground,
 } from '../../components/list';
+import {PullBox} from '../../components/pull-box';
 
 export default class TabContainer extends Component {
   constructor() {
     super();
 
     const labels = [{
-      id: 0,
+      id: '' + 0,
       name: 'Label1',
     }, {
-      id: 1,
+      id: '' + 1,
       name: 'Label2',
     }];
 
@@ -30,7 +31,7 @@ export default class TabContainer extends Component {
     for (let index = 0; index < 30; index++) {
       items.push({
         id: index + '-' + (new Date()).getTime(),
-        labelId: index % 2,
+        labelId: '' + index % 2,
         name: `Item ${index}`,
       });
     }
@@ -48,9 +49,9 @@ export default class TabContainer extends Component {
   _handleTouchHold() {
     console.log('touch hold!');
   }
-  _handleSwipeLeft(index) {
-    const items = this.state.items.filter((item, index_) => {
-      if (index_ !== index) {
+  _handleSwipeLeft(itemId) {
+    const items = this.state.items.filter((item) => {
+      if (item.id !== itemId) {
         return true;
       }
     });
@@ -60,10 +61,14 @@ export default class TabContainer extends Component {
   _handleSwipeRight(index) {
     console.log('swipe right');
   }
-  _handleSort(from, to) {
-    const items = this.state.items;
-    const item = items.splice(from, 1);
-    items.splice(to, 0, item[0]);
+  _handleSort(from, to, labelId) {
+    const items = this.state.items.filter((item) => {
+      if (item.labelId === labelId) {
+        return item;
+      }
+    });
+    const item = items.splice(from, 1)[0];
+    items.splice(to, 0, item);
 
     this.setState({items});
   }
@@ -85,7 +90,7 @@ export default class TabContainer extends Component {
           <ListItem
             key={item.id}
             onTouchHold={this.handleTouchHold}
-            onSwipeLeft={this.handleSwipeLeft}
+            onSwipeLeft={() => this.handleSwipeLeft(item.id)}
             onSwipeRight={this.handleSwipeRight}
             througnRight={false}
             >
@@ -103,7 +108,7 @@ export default class TabContainer extends Component {
       labelTabContentElements.push(
         <TabContentListItem key={index} index={index}>
           <List
-            onSort={this.handleSort}
+            onSort={(from, to) => this.handleSort(from, to, label.id)}
             >{listItemElements}</List>
         </TabContentListItem>
       );

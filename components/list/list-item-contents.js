@@ -33,6 +33,16 @@ export class ListItemContent extends Component {
     });
   }
   _handleTouchMove(event) {
+    const diff = this._calcDiff();
+    const props = this.context.getProps();
+
+    if (!this.context.holding() && diff.x <= 0 && props.onSwipeLeft) {
+      event.stopPropagation();
+    }
+    if (!this.context.holding() && diff.x >= 0 && props.onSwipeRight) {
+      event.stopPropagation();
+    }
+
     const distance = Math.sqrt(
       Math.pow(event.touches[0].clientX - this.touch.startX, 2) +
       Math.pow(event.touches[0].clientY - this.touch.startY, 2)

@@ -58,14 +58,8 @@ export class ListItem extends Component {
   _handleTouchMove(event) {
     const diff = this._calcDiff();
 
-    if (
-      (this.props.onSwipeLeft && diff.x < 20) ||
-      (this.props.onSwipeRight && diff.x > -20)
-    ) {
-      event.stopPropagation();
-    }
-
     if (this.touch.holding) {
+      event.stopPropagation();
       event.preventDefault();
     }
 
@@ -91,7 +85,6 @@ export class ListItem extends Component {
 
     this._updateTouchHoldView();
 
-    // callback
     this.props.onTouchHold();
   }
   _handleTouchEnd(event) {
@@ -99,7 +92,6 @@ export class ListItem extends Component {
 
     this._updateTouchEndView();
 
-    // callback
     const {currentIndex, targetIndex} = this._calcIndex();
     if (this.touch.holding && currentIndex !== null && targetIndex !== null && this.context.onSort) {
       this.context.onSort(currentIndex, targetIndex);
@@ -272,14 +264,16 @@ export class ListItem extends Component {
     const listElement = this.context.listElement();
     const listItemElements = listElement.querySelectorAll('.list-item');
 
+    const scrollTop = listElement.scrollTop;
+    const listTop = listElement.getBoundingClientRect().top;
+
     let currentIndex = null;
     let targetIndex = null;
 
     for (let index = 0; index < listItemElements.length; index++) {
       const listItemElement = listItemElements[index];
-      const scrollTop = listElement.scrollTop;
       const targetRect = {
-        top: listElement.offsetTop + listItemElement.offsetTop,
+        top: listTop + listItemElement.offsetTop,
         height: listItemElement.offsetHeight,
       };
 
