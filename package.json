@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "start": "npm run server & npm run watch:scripts & npm run watch:styles",
-    "server": "browser-sync start --server --files='./**/index.html,./**/bundle.css,./**/bundle.js' --no-open --no-ui --ss examples",
+    "server": "browser-sync start --server --files='./**/index.html,./**/bundle.css,./**/bundle.js' --no-open --no-ui --ss examples --no-notify --no-ghost-mode",
     "build:scripts": "browserify examples/index.js -o examples/bundle.js -t babelify",
     "watch:scripts": "watchify examples/index.js -o examples/bundle.js -t babelify --debug",
     "build:styles": "postcss -c .postcssrc.js",
