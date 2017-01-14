@@ -4,3 +4,4 @@ bundle.js
 bundle.css
 yarn.lock
 npm-debug.log
+lib

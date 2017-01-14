@@ -1,12 +1,30 @@
 {
-  "name": "react-ui-components",
+  "name": "@khirayama/react-ui-components",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "lib/index.js",
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/khirayama/react-ui-components.git"
+  },
+  "keywords": [
+    "react",
+    "component"
+  ],
+  "author": "khirayama",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/khirayama/react-ui-components/issues"
+  },
   "license": "MIT",
   "scripts": {
+    "prepublish": "npm run lint:fix && npm run build",
     "start": "npm run server & npm run watch:scripts & npm run watch:styles",
     "server": "browser-sync start --server --files='./**/index.html,./**/bundle.css,./**/bundle.js' --no-open --no-ui --ss examples --no-notify --no-ghost-mode",
-    "build:scripts": "browserify examples/index.js -o examples/bundle.js -t babelify",
+    "build": "babel components --out-dir lib",
+    "bundle:scripts": "browserify examples/index.js -o examples/bundle.js -t babelify",
     "watch:scripts": "watchify examples/index.js -o examples/bundle.js -t babelify --debug",
     "build:styles": "postcss -c .postcssrc.js",
     "watch:styles": "postcss -c .postcssrc.js -w",
