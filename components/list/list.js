@@ -1,7 +1,7 @@
 import React, {Component, PropTypes} from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
-const TRANSITION_TIME = 175;
+import {TRANSITION_TIME} from '../constants';
 
 export class List extends Component {
   constructor() {

@@ -1,17 +1,12 @@
 import React, {Component, PropTypes} from 'react';
 import classNames from 'classnames';
 
-const TRANSITION_TIME = 175;
-const THRESHOLD_HOLD_TIME = 500;
-const THRESHOLD_SCROLL_HEIGHT = 60;
-
-const transitionProperties = {
-  NONE: 'none',
-  ALL: 'all',
-  HEIGHT: 'height',
-  MAX_HEIGHT: 'max-height',
-  TRANSFORM: 'transform',
-};
+import {
+  TRANSITION_TIME,
+  THRESHOLD_HOLD_TIME,
+  THRESHOLD_SCROLL_HEIGHT,
+  transitionProperties,
+} from '../constants';
 
 export class ListItem extends Component {
   constructor() {
