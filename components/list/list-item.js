@@ -1,5 +1,4 @@
 import React, {Component, PropTypes} from 'react';
-import classNames from 'classnames';
 
 const TRANSITION_TIME = 175;
 const THRESHOLD_HOLD_TIME = 500;
@@ -33,6 +32,8 @@ export class ListItem extends Component {
     this.handleTouchMove = this._handleTouchMove.bind(this);
     this.handleTouchEnd = this._handleTouchEnd.bind(this);
     this.handleTouchHold = this._handleTouchHold.bind(this);
+
+    this.setListItem = this._setListItem.bind(this);
   }
   componentDidMount() {
     this._enterListItemAnimation();
@@ -57,8 +58,6 @@ export class ListItem extends Component {
     });
   }
   _handleTouchMove(event) {
-    const diff = this._calcDiff();
-
     if (this.touch.holding) {
       event.stopPropagation();
       event.preventDefault();
@@ -88,7 +87,7 @@ export class ListItem extends Component {
 
     this.props.onTouchHold();
   }
-  _handleTouchEnd(event) {
+  _handleTouchEnd() {
     clearTimeout(this.touch.timerId);
 
     this._updateTouchEndView();
@@ -218,7 +217,7 @@ export class ListItem extends Component {
       this.timerId = setInterval(() => {
         if (
           this.touch.endY &&
-          0 < listElement.scrollTop &&
+          listElement.scrollTop > 0 &&
           this.touch.endY < listElement.offsetTop + THRESHOLD_SCROLL_HEIGHT
         ) {
           listElement.scrollTop -= 3;
@@ -261,7 +260,6 @@ export class ListItem extends Component {
     };
   }
   _calcIndex() {
-    const diff = this._calcDiff();
     const listElement = this.context.listElement();
     const listItemElements = listElement.querySelectorAll('.list-item');
 
@@ -294,12 +292,14 @@ export class ListItem extends Component {
       targetIndex,
     };
   }
-
+  _setListItem(listItem) {
+    this.listItem = listItem;
+  }
   render() {
     return (
       <div
         className="list-item"
-        ref={(listItem) => this.listItem = listItem}
+        ref={this.setListItem}
         onTouchStart={this.handleTouchStart}
         onTouchMove={this.handleTouchMove}
         onTouchEnd={this.handleTouchEnd}
@@ -307,6 +307,11 @@ export class ListItem extends Component {
     );
   }
 }
+
+ListItem.propTypes = {
+  children: PropTypes.node,
+  onTouchHold: PropTypes.func,
+};
 
 ListItem.childContextTypes = {
   listItemElement: PropTypes.func,

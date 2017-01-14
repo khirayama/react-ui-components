@@ -1,7 +1,5 @@
 import React, {Component, PropTypes} from 'react';
 
-const TRANSITION_TIME = 175;
-
 export class PullBox extends Component {
   constructor() {
     super();
@@ -18,6 +16,10 @@ export class PullBox extends Component {
     this.handleTouchStart = this._handleTouchStart.bind(this);
     this.handleTouchMove = this._handleTouchMove.bind(this);
     this.handleTouchEnd = this._handleTouchEnd.bind(this);
+
+    this.setPullBox = this._setPullBox.bind(this);
+    this.setPullBoxContent = this._setPullBoxContent.bind(this);
+    this.setPullBoxMessage = this._setPullBoxMessage.bind(this);
   }
   _handleTouchStart(event) {
     this._updateTouchStartView();
@@ -108,22 +110,31 @@ export class PullBox extends Component {
       },
     };
   }
+  _setPullBox(pullBox) {
+    this.pullBox = pullBox;
+  }
+  _setPullBoxContent(pullBoxContent) {
+    this.pullBoxContent = pullBoxContent;
+  }
+  _setPullBoxMessage(pullBoxMessage) {
+    this.pullBoxMessage = pullBoxMessage;
+  }
   render() {
     return (
       <section
         className="pull-box"
-        ref={(pullBox) => this.pullBox = pullBox}
+        ref={this.setPullBox}
         >
         <div
           className="pull-box-content"
-          ref={(pullBoxContent) => this.pullBoxContent = pullBoxContent}
+          ref={this.setPullBoxContent}
           onTouchStart={this.handleTouchStart}
           onTouchMove={this.handleTouchMove}
           onTouchEnd={this.handleTouchEnd}
           >
           <div
             className="pull-box-message"
-            ref={(pullBoxMessage) => this.pullBoxMessage = pullBoxMessage}
+            ref={this.setPullBoxMessage}
             >Release it</div>
           {this.props.children}
         </div>
@@ -135,4 +146,9 @@ export class PullBox extends Component {
 PullBox.childContextTypes = {
   listElement: PropTypes.func,
   onSort: PropTypes.func,
+};
+
+PullBox.propTypes = {
+  children: PropTypes.node,
+  onRelease: PropTypes.func,
 };

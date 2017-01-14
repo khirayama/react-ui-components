@@ -24,6 +24,8 @@ export class ListItemContent extends Component {
     this.handleTouchStart = this._handleTouchStart.bind(this);
     this.handleTouchMove = this._handleTouchMove.bind(this);
     this.handleTouchEnd = this._handleTouchEnd.bind(this);
+
+    this.setListItemContent = this._setListItemContent.bind(this);
   }
   _handleTouchStart(event) {
     this.touch = Object.assign({}, this.touch, {
@@ -92,9 +94,6 @@ export class ListItemContent extends Component {
     };
   }
   _updateTouchMoveView() {
-    const diff = this._calcDiff();
-    const listItemElement = this.context.listItemElement();
-
     if (!this.context.holding()) {
       this._updateListItemContentView();
       this._updateBackgroundView();
@@ -138,8 +137,8 @@ export class ListItemContent extends Component {
     const THRESHOLD_WIDTH = window.innerWidth / 4;
 
     return (
-      (Math.abs(diff.x) > THRESHOLD_WIDTH && 0 < diff.x) ||
-      (Math.abs(diff.delta.x) > THRESHOLD_DELTA && 0 < diff.delta.x)
+      (Math.abs(diff.x) > THRESHOLD_WIDTH && diff.x > 0) ||
+      (Math.abs(diff.delta.x) > THRESHOLD_DELTA && diff.delta.x > 0)
     );
   }
   _calcDiff() {
@@ -164,7 +163,6 @@ export class ListItemContent extends Component {
     };
   }
   _calcCurrentIndex() {
-    const diff = this._calcDiff();
     const listElement = this.context.listElement();
     const listItemElements = listElement.querySelectorAll('.list-item');
 
@@ -253,13 +251,15 @@ export class ListItemContent extends Component {
         }
       }
     }
-
+  }
+  _setListItemContent(listItemContent) {
+    this.listItemContent = listItemContent;
   }
   render() {
     return (
       <div
         className="list-item-content"
-        ref={(listItemContent) => this.listItemContent = listItemContent}
+        ref={this.setListItemContent}
         onTouchStart={this.handleTouchStart}
         onTouchMove={this.handleTouchMove}
         onTouchEnd={this.handleTouchEnd}
@@ -267,6 +267,10 @@ export class ListItemContent extends Component {
     );
   }
 }
+
+ListItemContent.propTypes = {
+  children: PropTypes.node,
+};
 
 ListItemContent.contextTypes = {
   listElement: PropTypes.func,
@@ -286,6 +290,10 @@ export class ListItemLeftBackground extends Component {
   }
 }
 
+ListItemLeftBackground.propTypes = {
+  children: PropTypes.node,
+};
+
 export class ListItemRightBackground extends Component {
   render() {
     return (
@@ -295,3 +303,7 @@ export class ListItemRightBackground extends Component {
     );
   }
 }
+
+ListItemRightBackground.propTypes = {
+  children: PropTypes.node,
+};

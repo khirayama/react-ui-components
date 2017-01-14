@@ -33,4 +33,4 @@ Tab.childContextTypes = {
 
 Tab.propTypes = {
   children: PropTypes.node,
-}
+};

@@ -1,5 +1,4 @@
 import React, {Component, PropTypes} from 'react';
-import classNames from 'classnames';
 
 export class TabContentList extends Component {
   constructor() {
@@ -18,6 +17,8 @@ export class TabContentList extends Component {
     this.handleTouchStart = this._handleTouchStart.bind(this);
     this.handleTouchMove = this._handleTouchMove.bind(this);
     this.handleTouchEnd = this._handleTouchEnd.bind(this);
+
+    this.setTabContentList = this._setTabContentList.bind(this);
   }
   getChildContext() {
     return {
@@ -142,6 +143,9 @@ export class TabContentList extends Component {
     this.tabContentList.style.left = `calc(-${this.context.currentIndex * 100}%)`;
     this.tabContentList.style.transition = 'left .2s ease-out';
   }
+  _setTabContentList(tabContentList) {
+    this.tabContentList = tabContentList;
+  }
   render() {
     const diff = this._calcFilteredDiff();
     const style = {
@@ -152,9 +156,9 @@ export class TabContentList extends Component {
 
     return (
       <ul
-        className='tab-content-list'
+        className="tab-content-list"
         style={style}
-        ref={(tabContentList) => this.tabContentList = tabContentList}
+        ref={this.setTabContentList}
         >{this.props.children}</ul>
     );
   }

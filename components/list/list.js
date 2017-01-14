@@ -4,8 +4,13 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 const TRANSITION_TIME = 175;
 
 export class List extends Component {
+  constructor() {
+    super();
+
+    this.setListElement = this._setListElement.bind(this);
+  }
   componentDidMount() {
-    document.querySelector('.list-content').addEventListener('contextmenu', event => {
+    this.listElement.querySelector('.list-content').addEventListener('contextmenu', event => {
       event.preventDefault();
     });
   }
@@ -15,24 +20,32 @@ export class List extends Component {
       onSort: this.props.onSort,
     };
   }
+  _setListElement(listElement) {
+    this.listElement = listElement;
+  }
   render() {
     return (
       <section
         className="list"
-        ref={(listElement) => this.listElement = listElement}
-      >
+        ref={this.setListElement}
+        >
         <div className="list-content">
           <ReactCSSTransitionGroup
             transitionAppear={false}
             transitionName="list-item-transition"
             transitionEnterTimeout={TRANSITION_TIME}
             transitionLeaveTimeout={TRANSITION_TIME}
-          >{this.props.children}</ReactCSSTransitionGroup>
+            >{this.props.children}</ReactCSSTransitionGroup>
         </div>
       </section>
     );
   }
 }
+
+List.propTypes = {
+  children: PropTypes.node,
+  onSort: PropTypes.func,
+};
 
 List.childContextTypes = {
   listElement: PropTypes.func,
