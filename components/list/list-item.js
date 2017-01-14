@@ -1,4 +1,5 @@
 import React, {Component, PropTypes} from 'react';
+import classNames from 'classnames';
 
 const TRANSITION_TIME = 175;
 const THRESHOLD_HOLD_TIME = 500;
@@ -298,7 +299,7 @@ export class ListItem extends Component {
   render() {
     return (
       <div
-        className="list-item"
+        className={classNames(this.props.className, 'list-item')}
         ref={this.setListItem}
         onTouchStart={this.handleTouchStart}
         onTouchMove={this.handleTouchMove}
@@ -310,6 +311,7 @@ export class ListItem extends Component {
 
 ListItem.propTypes = {
   children: PropTypes.node,
+  className: PropTypes.string,
   onTouchHold: PropTypes.func,
 };
 

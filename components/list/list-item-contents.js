@@ -1,4 +1,5 @@
 import React, {Component, PropTypes} from 'react';
+import classNames from 'classnames';
 
 const TRANSITION_TIME = 175;
 const THRESHOLD_DELTA = 0.8;
@@ -258,7 +259,7 @@ export class ListItemContent extends Component {
   render() {
     return (
       <div
-        className="list-item-content"
+        className={classNames(this.props.className, 'list-item-content')}
         ref={this.setListItemContent}
         onTouchStart={this.handleTouchStart}
         onTouchMove={this.handleTouchMove}
@@ -270,6 +271,7 @@ export class ListItemContent extends Component {
 
 ListItemContent.propTypes = {
   children: PropTypes.node,
+  className: PropTypes.string,
 };
 
 ListItemContent.contextTypes = {
@@ -284,7 +286,13 @@ export class ListItemLeftBackground extends Component {
   render() {
     return (
       <div
-        className="list-item-background list-item-left-background"
+        className={
+          classNames(
+            this.props.className,
+            'list-item-background',
+            'list-item-left-background'
+          )
+        }
         >{this.props.children}</div>
     );
   }
@@ -292,13 +300,20 @@ export class ListItemLeftBackground extends Component {
 
 ListItemLeftBackground.propTypes = {
   children: PropTypes.node,
+  className: PropTypes.string,
 };
 
 export class ListItemRightBackground extends Component {
   render() {
     return (
       <div
-        className="list-item-background list-item-right-background"
+        className={
+          classNames(
+            this.props.className,
+            'list-item-background',
+            'list-item-right-background'
+          )
+        }
         >{this.props.children}</div>
     );
   }
@@ -306,4 +321,5 @@ export class ListItemRightBackground extends Component {
 
 ListItemRightBackground.propTypes = {
   children: PropTypes.node,
+  className: PropTypes.string,
 };
