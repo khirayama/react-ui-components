@@ -1,19 +1,19 @@
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 
-// list
-import ListContainer from './list/list-container';
+// table list
+import TableListContainer from './table-list/table-list-container';
 
 // tab
 import TabContainer from './tab/tab-container';
 
-// tab and list
-import TabListContainer from './tab-and-list/tab-list-container';
+// tab and table list
+import TabTableListContainer from './tab-and-table-list/tab-table-list-container';
 
 window.addEventListener('DOMContentLoaded', () => {
-  // list
-  if (document.querySelector('.list-component')) {
-    ReactDOM.render(<ListContainer/>, document.querySelector('.list-component'));
+  // table list
+  if (document.querySelector('.table-list-component')) {
+    ReactDOM.render(<TableListContainer/>, document.querySelector('.table-list-component'));
   }
 
   // tab
@@ -22,7 +22,7 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 
   // tab and list
-  if (document.querySelector('.tab-and-list')) {
-    ReactDOM.render(<TabListContainer/>, document.querySelector('.tab-and-list'));
+  if (document.querySelector('.tab-and-table-list')) {
+    ReactDOM.render(<TabTableListContainer/>, document.querySelector('.tab-and-table-list'));
   }
 });

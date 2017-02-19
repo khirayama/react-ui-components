@@ -3,7 +3,6 @@ import classNames from 'classnames';
 
 import {
   TRANSITION_TIME,
-  THRESHOLD_HOLD_TIME,
   THRESHOLD_SCROLL_HEIGHT,
   transitionProperties,
 } from '../constants';
@@ -12,110 +11,78 @@ export class ListItem extends Component {
   constructor() {
     super();
 
-    this.touch = {
+    this.mouse = {
+      down: false,
+      clickable: true,
       startX: null,
       startY: null,
       startScrollTop: null,
-      startTime: new Date(),
       endX: null,
       endY: null,
-      endTime: new Date(),
-      timerId: null,
-      holding: false,
     };
 
-    this.handleTouchStart = this._handleTouchStart.bind(this);
-    this.handleTouchMove = this._handleTouchMove.bind(this);
-    this.handleTouchEnd = this._handleTouchEnd.bind(this);
-    this.handleTouchHold = this._handleTouchHold.bind(this);
+    this.handleClick = this._handleClick.bind(this);
+    this.handleMouseDown = this._handleMouseDown.bind(this);
+    this.handleMouseMove = this._handleMouseMove.bind(this);
+    this.handleMouseUp = this._handleMouseUp.bind(this);
 
     this.setListItem = this._setListItem.bind(this);
   }
   componentDidMount() {
-    // can't prevent event passive in Chrome.
-    // because not use onTouchMove
-    this.listItem.addEventListener('touchmove', this.handleTouchMove);
     this._enterListItemAnimation();
-  }
-  getChildContext() {
-    return {
-      listItemElement: () => this.listItem,
-      holding: () => this.touch.holding,
-      getProps: () => this.props,
-      getTouch: () => this.touch,
-    };
   }
 
   // handling event
-  _handleTouchStart(event) {
-    this.touch = Object.assign({}, this.touch, {
-      startX: event.touches[0].clientX,
-      startY: event.touches[0].clientY,
+  _handleClick(event) {
+    if (this.mouse.clickable && this.props.onClick) {
+      this.props.onClick(event);
+    }
+  }
+  _handleMouseDown(event) {
+    this.mouse = Object.assign({}, this.mouse, {
+      down: true,
+      startX: event.clientX,
+      startY: event.clientY,
       startScrollTop: this.context.listElement().scrollTop,
-      startTime: new Date(),
-      timerId: setTimeout(this.handleTouchHold, THRESHOLD_HOLD_TIME),
     });
   }
-  _handleTouchMove(event) {
-    if (this.touch.holding) {
-      event.stopPropagation();
-      event.preventDefault();
-    }
-
-    const distance = Math.sqrt(
-      Math.pow(event.touches[0].clientX - this.touch.startX, 2) +
-      Math.pow(event.touches[0].clientY - this.touch.startY, 2)
-    );
-
-    if (distance > 10) {
-      clearTimeout(this.touch.timerId);
-
-      this.touch = Object.assign({}, this.touch, {
-        endX: event.touches[0].clientX,
-        endY: event.touches[0].clientY,
-        endTime: new Date(),
+  _handleMouseMove(event) {
+    if (this.mouse.down) {
+      this.mouse = Object.assign({}, this.mouse, {
+        clickable: false,
+        endX: event.clientX,
+        endY: event.clientY,
       });
 
-      this._updateTouchMoveView();
+      this._updateMouseMoveView();
     }
   }
-  _handleTouchHold() {
-    this.touch.holding = true;
-
-    if (this.props.onTouchHold || this.context.onSort) {
-      this._updateTouchHoldView();
-    }
-
-    if (this.props.onTouchHold) {
-      this.props.onTouchHold();
-    }
-  }
-  _handleTouchEnd() {
-    clearTimeout(this.touch.timerId);
-
-    this._updateTouchEndView();
+  _handleMouseUp() {
+    this._updateMouseUpView();
 
     const {currentIndex, targetIndex} = this._calcIndex();
-    if (this.touch.holding && currentIndex !== null && targetIndex !== null && this.context.onSort) {
+
+    if (currentIndex !== null && targetIndex !== null && this.context.onSort) {
       this.context.onSort(currentIndex, targetIndex);
     }
 
-    this.touch = {
+    this.mouse = {
+      down: false,
+      clickable: this.mouse.clickable,
       startX: null,
       startY: null,
       startScrollTop: null,
-      startTime: new Date(),
       endX: null,
       endY: null,
-      endTime: new Date(),
-      timerId: null,
-      holding: false,
     };
+    setTimeout(() => {
+      this.mouse.clickable = true;
+    }, 0);
   }
 
   // update views
-  _updateTouchMoveView() {
-    if (this.touch.holding && this.context.onSort) {
+  _updateMouseMoveView() {
+    if (this.context.onSort) {
       this.listItem.classList.add('list-item__sorting');
 
       this._moveCurrentListItemAnimation();
@@ -123,16 +90,7 @@ export class ListItem extends Component {
       this._scrollListView();
     }
   }
-  _updateTouchHoldView() {
-    if (!this.listItem.classList.contains('list-item__holding')) {
-      this.listItem.style.transitionProperty = transitionProperties.ALL;
-      this.listItem.classList.add('list-item__holding');
-    }
-  }
-  _updateTouchEndView() {
-    if (this.listItem.classList.contains('list-item__holding')) {
-      this.listItem.classList.remove('list-item__holding');
-    }
+  _updateMouseUpView() {
     if (this.listItem.classList.contains('list-item__sorting')) {
       this.listItem.classList.remove('list-item__sorting');
     }
@@ -143,11 +101,8 @@ export class ListItem extends Component {
     for (let index = 0; index < listItemElements.length; index++) {
       const listItemElement = listItemElements[index];
 
-      listItemElement.style.transitionProperty = transitionProperties.NONE;
       listItemElement.style.transform = 'translateY(0px)';
-      setTimeout(() => {
-        listItemElement.style.transitionProperty = transitionProperties.HEIGHT;
-      }, TRANSITION_TIME);
+      listItemElement.style.transitionProperty = transitionProperties.HEIGHT;
     }
   }
 
@@ -169,7 +124,7 @@ export class ListItem extends Component {
   }
   _moveCurrentListItemAnimation() {
     const diff = this._calcDiff();
-    const scrollDiff = this.touch.startScrollTop - this.context.listElement().scrollTop;
+    const scrollDiff = this.mouse.startScrollTop - this.context.listElement().scrollTop;
 
     this.listItem.style.transitionProperty = transitionProperties.NONE;
     this.listItem.style.transform = `translateY(${diff.y - scrollDiff}px)`;
@@ -219,17 +174,17 @@ export class ListItem extends Component {
     if (!this.timerId) {
       this.timerId = setInterval(() => {
         if (
-          this.touch.endY &&
+          this.mouse.endY &&
           listElement.scrollTop > 0 &&
-          this.touch.endY < listElementRect.top + THRESHOLD_SCROLL_HEIGHT
+          this.mouse.endY < listElementRect.top + THRESHOLD_SCROLL_HEIGHT
         ) {
           listElement.scrollTop -= 3;
           this._moveCurrentListItemAnimation();
           this._moveListItemAnimation();
         } else if (
-          this.touch.endY &&
+          this.mouse.endY &&
           listElement.scrollTop < listContentElement.offsetHeight - listElement.offsetHeight &&
-          this.touch.endY > listElementRect.top + listElement.offsetHeight - THRESHOLD_SCROLL_HEIGHT
+          this.mouse.endY > listElementRect.top + listElement.offsetHeight - THRESHOLD_SCROLL_HEIGHT
         ) {
           listElement.scrollTop += 3;
           this._moveCurrentListItemAnimation();
@@ -242,24 +197,16 @@ export class ListItem extends Component {
     }
   }
   _calcDiff() {
-    let x = this.touch.endX - this.touch.startX;
-    let y = this.touch.endY - this.touch.startY;
-    let time = this.touch.endTime.getTime() - this.touch.startTime.getTime();
+    let x = this.mouse.endX - this.mouse.startX;
+    let y = this.mouse.endY - this.mouse.startY;
 
-    time = (time < 0) ? 0 : time;
-
-    if (this.touch.endX === null || this.touch.endY === null) {
+    if (this.mouse.endX === null || this.mouse.endY === null) {
       x = 0;
       y = 0;
     }
     return {
       x,
       y,
-      time,
-      delta: {
-        x: Number((x / time).toFixed(2)),
-        y: Number((y / time).toFixed(2)),
-      },
     };
   }
   _calcIndex() {
@@ -283,9 +230,9 @@ export class ListItem extends Component {
         currentIndex = index;
       }
       if (
-        this.touch.endX !== null && this.touch.endY !== null &&
-        targetRect.top - scrollTop < this.touch.endY &&
-        this.touch.endY < targetRect.top + targetRect.height - scrollTop
+        this.mouse.endX !== null && this.mouse.endY !== null &&
+        targetRect.top - scrollTop < this.mouse.endY &&
+        this.mouse.endY < targetRect.top + targetRect.height - scrollTop
       ) {
         targetIndex = index;
       }
@@ -301,19 +248,16 @@ export class ListItem extends Component {
   }
   render() {
     const props = Object.assign({}, this.props);
-    delete props.onTouchHold;
-    delete props.onSwipeLeft;
-    delete props.onSwipeRight;
-    delete props.througnRight;
-    delete props.througnLeft;
 
     return (
       <div
         {...props}
         className={classNames(this.props.className, 'list-item')}
         ref={this.setListItem}
-        onTouchStart={this.handleTouchStart}
-        onTouchEnd={this.handleTouchEnd}
+        onMouseDown={this.handleMouseDown}
+        onMouseMove={this.handleMouseMove}
+        onMouseUp={this.handleMouseUp}
+        onClick={this.handleClick}
         >{this.props.children}</div>
     );
   }
@@ -322,14 +266,7 @@ export class ListItem extends Component {
 ListItem.propTypes = {
   children: PropTypes.node,
   className: PropTypes.string,
-  onTouchHold: PropTypes.func,
-};
-
-ListItem.childContextTypes = {
-  listItemElement: PropTypes.func,
-  holding: PropTypes.func,
-  getProps: PropTypes.func,
-  getTouch: PropTypes.func,
+  onClick: PropTypes.func,
 };
 
 ListItem.contextTypes = {

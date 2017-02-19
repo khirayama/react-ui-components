@@ -1,15 +1,15 @@
 import React, {Component, PropTypes} from 'react';
 import classNames from 'classnames';
 
-export class ListItemLeftBackground extends Component {
+export class TableListItemRightBackground extends Component {
   render() {
     return (
       <div
         className={
           classNames(
             this.props.className,
-            'list-item-background',
-            'list-item-left-background'
+            'table-list-item-background',
+            'table-list-item-right-background'
           )
         }
         >{this.props.children}</div>
@@ -17,7 +17,7 @@ export class ListItemLeftBackground extends Component {
   }
 }
 
-ListItemLeftBackground.propTypes = {
+TableListItemRightBackground.propTypes = {
   children: PropTypes.node,
   className: PropTypes.string,
 };

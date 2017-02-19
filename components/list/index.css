@@ -1,11 +1,7 @@
 /* reset */
 .list,
 .list-content,
-.list-item,
-.list-item-content ,
-.list-item-background,
-.list-item-left-background,
-.list-item-right-background {
+.list-item {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -30,7 +26,7 @@
     transition-duration: $time-fast;
     will-change: transform, height, max-height;
 
-    &__holding {
+    &__sorting {
       position: relative;
       z-index: 1;
     }
@@ -48,28 +44,6 @@
       }
     }
 
-    .list-item-content {
-      transition-timing-function: $ease-out;
-      transition-duration: $time-min;
-    }
-
-    .list-item-background {
-      display: none;
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      top: 0;
-      z-index: -1;
-    }
-    .list-item-left-background {
-      left: 0;
-      text-align: left;
-    }
-    .list-item-right-background {
-      right: 0;
-      text-align: right;
-    }
-
     &__moving {
       position: relative;
     }
@@ -80,13 +54,7 @@
 /* .list { */
 /*   .list-content { */
 /*     .list-item { */
-/*       .list-item__holding {} */
 /*       .list-item__sorting {} */
-/*       .list-item-content {} */
-/*       .list-item-background {} */
-/*       .list-item-background__will-swipe {} */
-/*       .list-item-left-background {} */
-/*       .list-item-right-background {} */
 /*     } */
 /*   } */
 /* } */

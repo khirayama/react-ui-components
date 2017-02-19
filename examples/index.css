@@ -32,11 +32,11 @@ body,
 }
 
 /* list custom */
-.list {
+.table-list {
   height: calc(100% - 52px);
-  .list-content {
+  .table-list-content {
     border-top: solid 1px #aaa;
-    .list-item {
+    .table-list-item {
       border-bottom: solid 1px #aaa;
       background-color: #fff;
 
@@ -45,11 +45,11 @@ body,
         transition-property: box-shadow;
       }
 
-      .list-item-content {
+      .table-list-item-content {
         background-color: #fff;
         padding: 18px 12px;
       }
-      .list-item-background {
+      .table-list-item-background {
         color: #fff;
         & div {
           font-size: 18px;
@@ -68,13 +68,13 @@ body,
           }
         }
       }
-      .list-item-left-background {
+      .table-list-item-left-background {
         background-color: #4caf50;
         & div {
           justify-content: flex-start;
         }
       }
-      .list-item-right-background {
+      .table-list-item-right-background {
         background-color: #ff9800;
         & div {
           justify-content: flex-end;

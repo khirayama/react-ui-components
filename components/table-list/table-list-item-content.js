@@ -7,7 +7,7 @@ import {
   transitionProperties,
 } from '../constants';
 
-export class ListItemContent extends Component {
+export class TableListItemContent extends Component {
   constructor() {
     super();
 
@@ -24,7 +24,7 @@ export class ListItemContent extends Component {
     this.handleTouchMove = this._handleTouchMove.bind(this);
     this.handleTouchEnd = this._handleTouchEnd.bind(this);
 
-    this.setListItemContent = this._setListItemContent.bind(this);
+    this.setTableListItemContent = this._setTableListItemContent.bind(this);
   }
   _handleTouchStart(event) {
     this.touch = Object.assign({}, this.touch, {
@@ -97,7 +97,7 @@ export class ListItemContent extends Component {
   }
   _updateTouchMoveView() {
     if (!this.context.holding()) {
-      this._updateListItemContentView();
+      this._updateTableListItemContentView();
       this._updateBackgroundView();
     }
   }
@@ -105,8 +105,8 @@ export class ListItemContent extends Component {
     const diff = this._calcDiff();
     const props = this.context.getProps();
     const listItemElement = this.context.listItemElement();
-    const leftBackgroundElement = listItemElement.querySelector('.list-item-left-background');
-    const rightBackgroundElement = listItemElement.querySelector('.list-item-right-background');
+    const leftBackgroundElement = listItemElement.querySelector('.table-list-item-left-background');
+    const rightBackgroundElement = listItemElement.querySelector('.table-list-item-right-background');
 
     this.listItemContent.style.transitionProperty = transitionProperties.TRANSFORM;
 
@@ -121,17 +121,17 @@ export class ListItemContent extends Component {
     } else {
       this.listItemContent.style.transform = `translateX(0px)`;
     }
-    if (listItemElement.classList.contains('list-item__moving')) {
+    if (listItemElement.classList.contains('table-list-item__moving')) {
       setTimeout(() => {
-        listItemElement.classList.remove('list-item__moving');
-        this.listItemContent.classList.remove('list-item-content__swipe');
-        this.listItemContent.classList.remove('list-item-content__swipe_left');
-        this.listItemContent.classList.remove('list-item-content__swipe_right');
+        listItemElement.classList.remove('table-list-item__moving');
+        this.listItemContent.classList.remove('table-list-item-content__swipe');
+        this.listItemContent.classList.remove('table-list-item-content__swipe_left');
+        this.listItemContent.classList.remove('table-list-item-content__swipe_right');
         if (leftBackgroundElement) {
-          leftBackgroundElement.classList.remove('list-item-background__will-swipe');
+          leftBackgroundElement.classList.remove('table-list-item-background__will-swipe');
         }
         if (rightBackgroundElement) {
-          rightBackgroundElement.classList.remove('list-item-background__will-swipe');
+          rightBackgroundElement.classList.remove('table-list-item-background__will-swipe');
         }
         // Prevent flickering of animation
       }, TRANSITION_TIME + 1);
@@ -178,7 +178,7 @@ export class ListItemContent extends Component {
   }
   _calcCurrentIndex() {
     const listElement = this.context.listElement();
-    const listItemElements = listElement.querySelectorAll('.list-item');
+    const listItemElements = listElement.querySelectorAll('.table-list-item');
 
     let currentIndex = null;
 
@@ -201,7 +201,7 @@ export class ListItemContent extends Component {
 
     return currentIndex;
   }
-  _updateListItemContentView() {
+  _updateTableListItemContentView() {
     const diff = this._calcDiff();
     const props = this.context.getProps();
     const listItemElement = this.context.listItemElement();
@@ -214,27 +214,27 @@ export class ListItemContent extends Component {
       if (diff.x > 0 && !props.onSwipeRight) {
         diffX = 0;
       }
-      listItemElement.classList.add('list-item__moving');
+      listItemElement.classList.add('table-list-item__moving');
       this.listItemContent.style.transitionProperty = transitionProperties.NONE;
       this.listItemContent.style.transform = `translateX(${diffX}px)`;
     }
     if (this._isLeftSwipe()) {
-      this.listItemContent.classList.add('list-item-content__swipe');
-      this.listItemContent.classList.add('list-item-content__swipe_left');
+      this.listItemContent.classList.add('table-list-item-content__swipe');
+      this.listItemContent.classList.add('table-list-item-content__swipe_left');
     } else if (this._isRightSwipe()) {
-      this.listItemContent.classList.add('list-item-content__swipe');
-      this.listItemContent.classList.add('list-item-content__swipe_right');
+      this.listItemContent.classList.add('table-list-item-content__swipe');
+      this.listItemContent.classList.add('table-list-item-content__swipe_right');
     } else {
-      this.listItemContent.classList.remove('list-item-content__swipe');
-      this.listItemContent.classList.remove('list-item-content__swipe_left');
-      this.listItemContent.classList.remove('list-item-content__swipe_right');
+      this.listItemContent.classList.remove('table-list-item-content__swipe');
+      this.listItemContent.classList.remove('table-list-item-content__swipe_left');
+      this.listItemContent.classList.remove('table-list-item-content__swipe_right');
     }
   }
   _updateBackgroundView() {
     const diff = this._calcDiff();
     const listItemElement = this.context.listItemElement();
-    const leftBackgroundElement = listItemElement.querySelector('.list-item-left-background');
-    const rightBackgroundElement = listItemElement.querySelector('.list-item-right-background');
+    const leftBackgroundElement = listItemElement.querySelector('.table-list-item-left-background');
+    const rightBackgroundElement = listItemElement.querySelector('.table-list-item-right-background');
 
     if (diff.x > 1 && Math.abs(diff.x) > Math.abs(diff.y)) {
       if (leftBackgroundElement) {
@@ -254,38 +254,38 @@ export class ListItemContent extends Component {
 
     if (this._isRightSwipe()) {
       if (leftBackgroundElement) {
-        if (!leftBackgroundElement.classList.contains('list-item-background__will-swipe')) {
-          leftBackgroundElement.classList.add('list-item-background__will-swipe');
+        if (!leftBackgroundElement.classList.contains('table-list-item-background__will-swipe')) {
+          leftBackgroundElement.classList.add('table-list-item-background__will-swipe');
         }
       }
     } else if (this._isLeftSwipe()) {
       if (rightBackgroundElement) {
-        if (!rightBackgroundElement.classList.contains('list-item-background__will-swipe')) {
-          rightBackgroundElement.classList.add('list-item-background__will-swipe');
+        if (!rightBackgroundElement.classList.contains('table-list-item-background__will-swipe')) {
+          rightBackgroundElement.classList.add('table-list-item-background__will-swipe');
         }
       }
     } else {
       if (leftBackgroundElement) {
-        if (leftBackgroundElement.classList.contains('list-item-background__will-swipe')) {
-          leftBackgroundElement.classList.remove('list-item-background__will-swipe');
+        if (leftBackgroundElement.classList.contains('table-list-item-background__will-swipe')) {
+          leftBackgroundElement.classList.remove('table-list-item-background__will-swipe');
         }
       }
       if (rightBackgroundElement) {
-        if (rightBackgroundElement.classList.contains('list-item-background__will-swipe')) {
-          rightBackgroundElement.classList.remove('list-item-background__will-swipe');
+        if (rightBackgroundElement.classList.contains('table-list-item-background__will-swipe')) {
+          rightBackgroundElement.classList.remove('table-list-item-background__will-swipe');
         }
       }
     }
   }
-  _setListItemContent(listItemContent) {
+  _setTableListItemContent(listItemContent) {
     this.listItemContent = listItemContent;
   }
   render() {
     return (
       <div
         {...this.props}
-        className={classNames(this.props.className, 'list-item-content')}
-        ref={this.setListItemContent}
+        className={classNames(this.props.className, 'table-list-item-content')}
+        ref={this.setTableListItemContent}
         onTouchStart={this.handleTouchStart}
         onTouchMove={this.handleTouchMove}
         onTouchEnd={this.handleTouchEnd}
@@ -294,12 +294,12 @@ export class ListItemContent extends Component {
   }
 }
 
-ListItemContent.propTypes = {
+TableListItemContent.propTypes = {
   children: PropTypes.node,
   className: PropTypes.string,
 };
 
-ListItemContent.contextTypes = {
+TableListItemContent.contextTypes = {
   listElement: PropTypes.func,
   listItemElement: PropTypes.func,
   holding: PropTypes.func,

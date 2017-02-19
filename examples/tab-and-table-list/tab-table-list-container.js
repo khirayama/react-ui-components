@@ -7,12 +7,12 @@ import {
   TabContentListItem,
 } from '../../components/tab';
 import {
-  List,
-  ListItem,
-  ListItemContent,
-  ListItemLeftBackground,
-  ListItemRightBackground,
-} from '../../components/list';
+  TableList,
+  TableListItem,
+  TableListItemContent,
+  TableListItemLeftBackground,
+  TableListItemRightBackground,
+} from '../../components/table-list';
 
 export default class TabContainer extends Component {
   constructor() {
@@ -86,29 +86,29 @@ export default class TabContainer extends Component {
 
       const listItemElements = items.map((item) => {
         return (
-          <ListItem
+          <TableListItem
             key={item.id}
             onTouchHold={this.handleTouchHold}
             onSwipeLeft={() => this.handleSwipeLeft(item.id)}
             onSwipeRight={this.handleSwipeRight}
             througnRight={false}
             >
-            <ListItemLeftBackground>
+            <TableListItemLeftBackground>
               <div>L</div>
-            </ListItemLeftBackground>
-            <ListItemContent>{item.name}</ListItemContent>
-            <ListItemRightBackground>
+            </TableListItemLeftBackground>
+            <TableListItemContent>{item.name}</TableListItemContent>
+            <TableListItemRightBackground>
               <div>R</div>
-            </ListItemRightBackground>
-          </ListItem>
+            </TableListItemRightBackground>
+          </TableListItem>
         );
       });
 
       labelTabContentElements.push(
         <TabContentListItem key={index} index={index}>
-          <List
+          <TableList
             onSort={(from, to) => this.handleSort(from, to, label.id)}
-            >{listItemElements}</List>
+            >{listItemElements}</TableList>
         </TabContentListItem>
       );
     });

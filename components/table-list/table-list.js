@@ -4,14 +4,14 @@ import classNames from 'classnames';
 
 import {TRANSITION_TIME} from '../constants';
 
-export class SortableList extends Component {
+export class TableList extends Component {
   constructor() {
     super();
 
-    this.setListElement = this._setListElement.bind(this);
+    this.setTableListElement = this._setTableListElement.bind(this);
   }
   componentDidMount() {
-    this.listElement.querySelector('.sortable-list-content').addEventListener('contextmenu', event => {
+    this.listElement.querySelector('.table-list-content').addEventListener('contextmenu', event => {
       event.preventDefault();
     });
   }
@@ -21,19 +21,19 @@ export class SortableList extends Component {
       onSort: this.props.onSort,
     };
   }
-  _setListElement(listElement) {
+  _setTableListElement(listElement) {
     this.listElement = listElement;
   }
   render() {
     return (
       <section
-        className={classNames('sortable-list', this.props.className)}
-        ref={this.setListElement}
+        className={classNames('table-list', this.props.className)}
+        ref={this.setTableListElement}
         >
-        <div className="sortable-list-content">
+        <div className="table-list-content">
           <ReactCSSTransitionGroup
             transitionAppear={false}
-            transitionName="sortable-list-item-transition"
+            transitionName="table-list-item-transition"
             transitionEnterTimeout={TRANSITION_TIME}
             transitionLeaveTimeout={TRANSITION_TIME}
             >{this.props.children}</ReactCSSTransitionGroup>
@@ -43,13 +43,13 @@ export class SortableList extends Component {
   }
 }
 
-SortableList.propTypes = {
+TableList.propTypes = {
   className: PropTypes.string,
   children: PropTypes.node,
   onSort: PropTypes.func,
 };
 
-SortableList.childContextTypes = {
+TableList.childContextTypes = {
   listElement: PropTypes.func,
   onSort: PropTypes.func,
 };

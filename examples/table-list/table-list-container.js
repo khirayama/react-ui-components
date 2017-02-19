@@ -1,14 +1,14 @@
 import React, {Component} from 'react';
 
 import {
-  List,
-  ListItem,
-  ListItemContent,
-  ListItemLeftBackground,
-  ListItemRightBackground,
-} from '../../components/list';
+  TableList,
+  TableListItem,
+  TableListItemContent,
+  TableListItemLeftBackground,
+  TableListItemRightBackground,
+} from '../../components/table-list';
 
-export default class ListContainer extends Component {
+export default class TableListContainer extends Component {
   constructor(props) {
     super(props);
 
@@ -75,21 +75,21 @@ export default class ListContainer extends Component {
   render() {
     const listItemElements = this.state.items.map((item) => {
       return (
-        <ListItem
+        <TableListItem
           key={item.id}
           onTouchHold={this.handleTouchHold}
           onSwipeLeft={this.handleSwipeLeft}
           onSwipeRight={this.handleSwipeRight}
           througnRight={false}
           >
-          <ListItemLeftBackground>
+          <TableListItemLeftBackground>
             <div>L</div>
-          </ListItemLeftBackground>
-          <ListItemContent>{item.name}</ListItemContent>
-          <ListItemRightBackground>
+          </TableListItemLeftBackground>
+          <TableListItemContent>{item.name}</TableListItemContent>
+          <TableListItemRightBackground>
             <div>R</div>
-          </ListItemRightBackground>
-        </ListItem>
+          </TableListItemRightBackground>
+        </TableListItem>
       );
     });
 
@@ -99,9 +99,9 @@ export default class ListContainer extends Component {
           <div className="button" onClick={this.handleClickAddButton}>add item</div>
           <div className="button" onClick={this.handleClickRemoveButton}>remove item</div>
         </div>
-        <List
+        <TableList
           onSort={this.handleSort}
-          >{listItemElements}</List>
+          >{listItemElements}</TableList>
       </section>
     );
   }
