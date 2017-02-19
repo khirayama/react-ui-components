@@ -1,4 +1,6 @@
 import React, {Component, PropTypes} from 'react';
+import ReactDOM from 'react-dom';
+
 import {
   Tab,
   TabList,
@@ -14,7 +16,7 @@ import {
   TableListItemRightBackground,
 } from '../../components/table-list';
 
-export default class TabContainer extends Component {
+class TabContainer extends Component {
   constructor() {
     super();
 
@@ -120,3 +122,7 @@ export default class TabContainer extends Component {
     );
   }
 }
+
+window.addEventListener('DOMContentLoaded', () => {
+  ReactDOM.render(<TabTableListContainer/>, document.querySelector('.tab-and-table-list'));
+});

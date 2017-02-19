@@ -1,4 +1,6 @@
 import React, {Component, PropTypes} from 'react';
+import ReactDOM from 'react-dom';
+
 import {
   Tab,
   TabList,
@@ -7,7 +9,7 @@ import {
   TabContentListItem,
 } from '../../components/tab';
 
-export default class TabContainer extends Component {
+class TabContainer extends Component {
   render() {
     const labels = [{
       name: 'Label1',
@@ -35,3 +37,7 @@ export default class TabContainer extends Component {
     );
   }
 }
+
+window.addEventListener('DOMContentLoaded', () => {
+  ReactDOM.render(<TabContainer/>, document.querySelector('.tab-component'));
+});

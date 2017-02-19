@@ -20,17 +20,6 @@ body,
   overflow: hidden;
 }
 
-.buttons-container {
-  height: 52px;
-  .button {
-    padding: 8px;
-    margin: 8px;
-    border-radius: 2px;
-    border: solid 1px #aaa;
-    display: inline-block;
-  }
-}
-
 /* list custom */
 .table-list {
   height: calc(100% - 52px);

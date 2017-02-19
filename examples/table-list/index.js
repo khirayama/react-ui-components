@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import ReactDOM from 'react-dom';
 
 import {
   TableList,
@@ -8,7 +9,7 @@ import {
   TableListItemRightBackground,
 } from '../../components/table-list';
 
-export default class TableListContainer extends Component {
+class TableListContainer extends Component {
   constructor(props) {
     super(props);
 
@@ -106,3 +107,7 @@ export default class TableListContainer extends Component {
     );
   }
 }
+
+window.addEventListener('DOMContentLoaded', () => {
+  ReactDOM.render(<TableListContainer/>, document.querySelector('.table-list-component'));
+});
