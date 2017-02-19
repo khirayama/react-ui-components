@@ -38,6 +38,9 @@ export class ListItemContent extends Component {
     const props = this.context.getProps();
     const touch = this.context.getTouch();
 
+    if (touch.startScrollTop !== this.context.listElement().scrollTop) {
+      return;
+    }
     clearTimeout(touch.timerId);
     if (Math.abs(diff.x) >= Math.abs(diff.y) && !this.context.holding() && diff.x <= 0 && props.onSwipeLeft) {
       event.stopPropagation();
@@ -100,8 +103,10 @@ export class ListItemContent extends Component {
   }
   _updateTouchEndView() {
     const diff = this._calcDiff();
-    const listItemElement = this.context.listItemElement();
     const props = this.context.getProps();
+    const listItemElement = this.context.listItemElement();
+    const leftBackgroundElement = listItemElement.querySelector('.list-item-left-background');
+    const rightBackgroundElement = listItemElement.querySelector('.list-item-right-background');
 
     this.listItemContent.style.transitionProperty = transitionProperties.TRANSFORM;
 
@@ -119,7 +124,17 @@ export class ListItemContent extends Component {
     if (listItemElement.classList.contains('list-item__moving')) {
       setTimeout(() => {
         listItemElement.classList.remove('list-item__moving');
-      }, TRANSITION_TIME);
+        this.listItemContent.classList.remove('list-item-content__swipe');
+        this.listItemContent.classList.remove('list-item-content__swipe_left');
+        this.listItemContent.classList.remove('list-item-content__swipe_right');
+        if (leftBackgroundElement) {
+          leftBackgroundElement.classList.remove('list-item-background__will-swipe');
+        }
+        if (rightBackgroundElement) {
+          rightBackgroundElement.classList.remove('list-item-background__will-swipe');
+        }
+        // Prevent flickering of animation
+      }, TRANSITION_TIME + 1);
     }
   }
   _isLeftSwipe() {
@@ -203,6 +218,17 @@ export class ListItemContent extends Component {
       this.listItemContent.style.transitionProperty = transitionProperties.NONE;
       this.listItemContent.style.transform = `translateX(${diffX}px)`;
     }
+    if (this._isLeftSwipe()) {
+      this.listItemContent.classList.add('list-item-content__swipe');
+      this.listItemContent.classList.add('list-item-content__swipe_left');
+    } else if (this._isRightSwipe()) {
+      this.listItemContent.classList.add('list-item-content__swipe');
+      this.listItemContent.classList.add('list-item-content__swipe_right');
+    } else {
+      this.listItemContent.classList.remove('list-item-content__swipe');
+      this.listItemContent.classList.remove('list-item-content__swipe_left');
+      this.listItemContent.classList.remove('list-item-content__swipe_right');
+    }
   }
   _updateBackgroundView() {
     const diff = this._calcDiff();
@@ -210,14 +236,14 @@ export class ListItemContent extends Component {
     const leftBackgroundElement = listItemElement.querySelector('.list-item-left-background');
     const rightBackgroundElement = listItemElement.querySelector('.list-item-right-background');
 
-    if (diff.x > 0) {
+    if (diff.x > 1 && Math.abs(diff.x) > Math.abs(diff.y)) {
       if (leftBackgroundElement) {
         leftBackgroundElement.style.display = 'inline-block';
       }
       if (rightBackgroundElement) {
         rightBackgroundElement.style.display = 'none';
       }
-    } else if (diff.x < 0) {
+    } else if (diff.x < 0 && Math.abs(diff.x) > Math.abs(diff.y)) {
       if (leftBackgroundElement) {
         leftBackgroundElement.style.display = 'none';
       }
@@ -257,6 +283,7 @@ export class ListItemContent extends Component {
   render() {
     return (
       <div
+        {...this.props}
         className={classNames(this.props.className, 'list-item-content')}
         ref={this.setListItemContent}
         onTouchStart={this.handleTouchStart}

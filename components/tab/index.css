@@ -31,6 +31,9 @@
     display: flex;
     position: relative;
     list-style: none;
+    transition-timing-function: $ease-out;
+    transition-duration: $time-basic;
+    transition-property: left;
     will-change: left;
 
     .tab-content-list-item {

@@ -40,7 +40,6 @@ export class TabContentList extends Component {
   }
   _handleTouchMove(event) {
     event.stopPropagation();
-    event.preventDefault();
 
     this.touch = Object.assign({}, this.touch, {
       endX: event.touches[0].clientX,
@@ -128,12 +127,11 @@ export class TabContentList extends Component {
   _updateTouchMoveView() {
     const diff = this._calcFilteredDiff();
 
-    if (this.touch._moving && diff.x !== 0) {
+    if (this.touch.moving && diff.x !== 0 && (Math.abs(diff.delta.x) > Math.abs(diff.delta.y)) && (Math.abs(diff.x) > Math.abs(diff.y))) {
       this.tabContentList.classList.add('tab-content-list__moving');
+      this.tabContentList.style.left = `calc(-${this.context.currentIndex * 100}% + ${diff.x}px)`;
+      this.tabContentList.style.transitionProperty = 'none';
     }
-
-    this.tabContentList.style.left = `calc(-${this.context.currentIndex * 100}% + ${diff.x}px)`;
-    this.tabContentList.style.transition = 'none';
   }
   _updateTouchEndView() {
     if (this.tabContentList.classList.contains('tab-content-list__moving')) {
@@ -141,7 +139,7 @@ export class TabContentList extends Component {
     }
 
     this.tabContentList.style.left = `calc(-${this.context.currentIndex * 100}%)`;
-    this.tabContentList.style.transition = 'left .2s ease-out';
+    this.tabContentList.style.transitionProperty = 'left';
   }
   _setTabContentList(tabContentList) {
     this.tabContentList = tabContentList;
@@ -151,7 +149,6 @@ export class TabContentList extends Component {
     const style = {
       width: (this.props.children.length * 100) + '%',
       left: `calc(-${this.context.currentIndex * 100}% + ${diff.x}px)`,
-      transition: 'left .2s ease-out',
     };
 
     return (

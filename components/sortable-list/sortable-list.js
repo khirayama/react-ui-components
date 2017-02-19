@@ -4,14 +4,14 @@ import classNames from 'classnames';
 
 import {TRANSITION_TIME} from '../constants';
 
-export class List extends Component {
+export class SortableList extends Component {
   constructor() {
     super();
 
     this.setListElement = this._setListElement.bind(this);
   }
   componentDidMount() {
-    this.listElement.querySelector('.list-content').addEventListener('contextmenu', event => {
+    this.listElement.querySelector('.sortable-list-content').addEventListener('contextmenu', event => {
       event.preventDefault();
     });
   }
@@ -27,13 +27,13 @@ export class List extends Component {
   render() {
     return (
       <section
-        className={classNames('list', this.props.className)}
+        className={classNames('sortable-list', this.props.className)}
         ref={this.setListElement}
         >
-        <div className="list-content">
+        <div className="sortable-list-content">
           <ReactCSSTransitionGroup
             transitionAppear={false}
-            transitionName="list-item-transition"
+            transitionName="sortable-list-item-transition"
             transitionEnterTimeout={TRANSITION_TIME}
             transitionLeaveTimeout={TRANSITION_TIME}
             >{this.props.children}</ReactCSSTransitionGroup>
@@ -43,13 +43,13 @@ export class List extends Component {
   }
 }
 
-List.propTypes = {
+SortableList.propTypes = {
   className: PropTypes.string,
   children: PropTypes.node,
   onSort: PropTypes.func,
 };
 
-List.childContextTypes = {
+SortableList.childContextTypes = {
   listElement: PropTypes.func,
   onSort: PropTypes.func,
 };
